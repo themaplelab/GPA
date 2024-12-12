@@ -90,7 +90,6 @@ int main(int argc, char** argv){
     std::vector<Constraint> constraints;
 
     // collect constraints
-    // todo: missing constrains for arguments
     for(const auto &Function : *Mod){
         for(const auto &BasicBlock : Function){
             for(const auto &Instruction : BasicBlock){
@@ -135,6 +134,33 @@ int main(int argc, char** argv){
                     auto rhs = getMemoryObjectFromPtr(memoryObjects, BitCast);
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
                 }
+            
+                if(const auto &Call = llvm::dyn_cast<llvm::CallInst>(&Instruction)){
+                    // add copy edge from argument to parameter
+                    // add copy edge from parameter to argument
+                    size_t i = 0;
+                    // llvm::outs() << "aaaa " << Call->getCalledFunction()->arg_size() << "\n";
+                    while(Call->getCalledFunction() && i < Call->getCalledFunction()->arg_size()){
+
+                        // todo: add case for indirect call
+                        auto parameter = Call->getCalledFunction()->getArg(i);
+                        auto argument = Call->getOperand(i);
+
+                        // llvm::outs() << "aaaa" << *parameter << " " << *argument << "\n";
+
+                        if(parameter->getType()->isPointerTy()){
+                            auto lhs = getMemoryObjectFromPtr(memoryObjects, argument);
+                            auto rhs = getMemoryObjectFromPtr(memoryObjects, parameter);
+                            constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
+                            constraints.push_back(Constraint(rhs, lhs, Constraint::ConstraintType::Copy));
+                        }
+
+                        ++i;
+                    }
+                    
+                    
+                }
+            
             }
         }
     }
