@@ -74,22 +74,7 @@ ConstraintGraph createConstraintGraph(const std::vector<Constraint> &constraints
     return cg;
 }
 
-int main(int argc, char** argv){
-
-    llvm::LLVMContext Context;
-    llvm::SMDiagnostic Err;
-
-    // Read the LLVM IR file
-    std::unique_ptr<llvm::Module> Mod = llvm::parseIRFile("/Users/jiaqi/Documents/PublicProject/GPU-FSPA/tests/misc/interSwap.ll", Err, Context);
-    if (!Mod) {
-        Err.print(argv[0], llvm::errs());
-        return 1;
-    }
-
-    std::vector<MemoryObject> memoryObjects;
-    std::vector<Constraint> constraints;
-
-    // collect constraints
+void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Constraint> &constraints, std::unique_ptr<llvm::Module> &Mod){
     for(const auto &Function : *Mod){
         for(const auto &BasicBlock : Function){
             for(const auto &Instruction : BasicBlock){
@@ -139,14 +124,9 @@ int main(int argc, char** argv){
                     // add copy edge from argument to parameter
                     // add copy edge from parameter to argument
                     size_t i = 0;
-                    // llvm::outs() << "aaaa " << Call->getCalledFunction()->arg_size() << "\n";
                     while(Call->getCalledFunction() && i < Call->getCalledFunction()->arg_size()){
-
-                        // todo: add case for indirect call
                         auto parameter = Call->getCalledFunction()->getArg(i);
                         auto argument = Call->getOperand(i);
-
-                        // llvm::outs() << "aaaa" << *parameter << " " << *argument << "\n";
 
                         if(parameter->getType()->isPointerTy()){
                             auto lhs = getMemoryObjectFromPtr(memoryObjects, argument);
@@ -164,7 +144,27 @@ int main(int argc, char** argv){
             }
         }
     }
+}
 
+
+
+int main(int argc, char** argv){
+
+    llvm::LLVMContext Context;
+    llvm::SMDiagnostic Err;
+
+    // Read the LLVM IR file
+    std::unique_ptr<llvm::Module> Mod = llvm::parseIRFile("/Users/jiaqi/Documents/PublicProject/GPU-FSPA/tests/misc/interSwap.ll", Err, Context);
+    if (!Mod) {
+        Err.print(argv[0], llvm::errs());
+        return 1;
+    }
+
+    std::vector<MemoryObject> memoryObjects;
+    std::vector<Constraint> constraints;
+
+    // collect constraints
+    collectConstraints(memoryObjects, constraints, Mod);
 
     printConstraints(constraints);
     auto cg = createConstraintGraph(constraints);
@@ -180,9 +180,6 @@ int main(int argc, char** argv){
 
         for(auto node : worklist){
 
-            // print(node);
-            // llvm::outs() << "\n";
-
             // apply store rule
             auto stores = std::set<MemoryObject>();
             if(cg.getSedges().count(node)){
@@ -192,21 +189,6 @@ int main(int argc, char** argv){
             if(cg.getPedges().count(node)){
                 pts = cg.getPedges().at(node);
             }
-
-            // for(auto store : stores){
-            //     llvm::outs() << "store ";
-            //     print(store);
-            //     llvm::outs() << "\n";
-            // }
-
-            // for(auto pt : pts){
-            //     llvm::outs() << "pt ";
-            //     print(pt);
-            //     llvm::outs() << "\n";
-            // }
-
-
-
 
             for(auto store : stores){
                 bool changed = false;
