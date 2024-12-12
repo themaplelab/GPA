@@ -1,3 +1,6 @@
+#ifndef GPU_FSPA_CONSTRAINTS_H
+#define GPU_FSPA_CONSTRAINTS_H
+
 #include <vector>
 
 #include "llvm/IR/Value.h"
@@ -18,6 +21,14 @@ class MemoryObject{
 
         const llvm::Value* getPtr() const{
             return ptr;
+        }
+
+        size_t getId() const{
+            return id;
+        }
+
+        bool operator<(const MemoryObject& other) const{
+            return this->id < other.id;
         }
 
 };
@@ -41,5 +52,19 @@ class Constraint{
 
     public:
         Constraint(MemoryObject lhs, MemoryObject rhs, ConstraintType type) : lhs(lhs), rhs(rhs), type(type) {}
+        MemoryObject getLhs() const{
+            return lhs;
+        }
+
+        MemoryObject getRhs() const{
+            return rhs;
+        }
+
+        ConstraintType getType() const{
+            return type;
+        }
 
 };
+
+
+#endif
