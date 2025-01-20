@@ -1,2 +1,3 @@
-#include "Constraint.h"
+#include "Constraints.h"
 
+size_t MemoryObject::counter = 0;

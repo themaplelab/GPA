@@ -12,15 +12,21 @@ class MemoryObject{
     private:
         size_t id;
         const llvm::Value *ptr;
+        bool isAllocated;
 
 
     public:
-        MemoryObject(const llvm::Value *ptr = nullptr) : ptr(ptr){
+        MemoryObject(const llvm::Value *ptr = nullptr, bool isAllocated = false) : ptr(ptr){
             id = counter++;
+            isAllocated = isAllocated;
         }
 
         const llvm::Value* getPtr() const{
             return ptr;
+        }
+
+        bool isAllocatedMemoryObject() const{
+            return isAllocated;
         }
 
         size_t getId() const{
@@ -33,7 +39,7 @@ class MemoryObject{
 
 };
 
-size_t MemoryObject::counter = 0;
+
 
 
 
