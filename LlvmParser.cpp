@@ -1,13 +1,5 @@
 #include "LlvmParser.h"
 
-void print0(const MemoryObject &m){
-    if(m.getPtr()){
-        llvm::outs() << *m.getPtr() << " (ID: " << m.getId() << ")";
-    }
-    else{
-        llvm::outs() << "New MO (ID: " << m.getId() << ")";
-    }
-}
 
 LLVMParser::LLVMParser(std::string irName){
     llvm::SMDiagnostic Err;

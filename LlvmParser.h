@@ -27,24 +27,24 @@ class LLVMParser{
     std::set<size_t> addressTakenVars;
     // All memory objects in this programs.
     std::vector<MemoryObject> memoryObjects;
+    // todo: update modules to be a map. mapping each id to it's memoryobject (which contains the same id)
     std::vector<std::unique_ptr<llvm::Module>> modules;
 
 
     public:
         LLVMParser(std::string irName);
         std::unique_ptr<llvm::Module>& getLLVMModule() {return module;}
-
-        std::vector<MemoryObject>& getMemoryObjects() {
-            return memoryObjects;
-            }
+        std::vector<MemoryObject>& getMemoryObjects() {return memoryObjects;}
         std::set<size_t> getTopLevelVariables() {return topLevelVars;}
         std::set<size_t> getAddressTakenVariables() {return addressTakenVars;}
+        // todo: update getMemoryObjectIndexFromPtr to return id instead of the position in a vector.
+        size_t getMemoryObjectIndexFromPtr(const llvm::Value *, bool);
 
     private:
         // implementation detail of public functions.
 
         void populateTopLevelAndAddressTakenVariables();
-        size_t getMemoryObjectIndexFromPtr(const llvm::Value *, bool);
+        
 
         
 

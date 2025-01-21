@@ -33,25 +33,17 @@ void printConstraints(const std::vector<Constraint> &constraints){
 
         if(type == Constraint::ConstraintType::Load){
             // llvm::outs() << *rhs.getPtr() << " --- L ---> " << *lhs.getPtr() << "\n"; 
-            print(lhs);
-            llvm::outs() << " \t--- L --->\t ";
-            print(rhs);
+            llvm::outs() << lhs << " \t--- L --->\t " << rhs;
         }
         else if(type == Constraint::ConstraintType::Store){
-            print(lhs);
-            llvm::outs() << " \t--- S --->\t ";
-            print(rhs);
+            llvm::outs() << lhs << " \t--- S --->\t " << rhs;
 
         }
         else if(type == Constraint::ConstraintType::PointsTo){
-            print(lhs);
-            llvm::outs() << " \t--- P --->\t ";
-            print(rhs);
+            llvm::outs() << lhs << " \t--- P --->\t " << rhs;
         }
         else if(type == Constraint::ConstraintType::Copy){
-            print(lhs);
-            llvm::outs() << " \t--- C --->\t ";
-            print(rhs);
+            llvm::outs() << lhs << " \t--- C --->\t " << rhs;
         }
 
         llvm::outs() << "\n";
@@ -77,17 +69,17 @@ ConstraintGraph createConstraintGraph(const std::vector<Constraint> &constraints
     return cg;
 }
 
-void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Constraint> &constraints, std::unique_ptr<llvm::Module> &Mod){
+void collectConstraints(LLVMParser &parser, std::vector<Constraint> &constraints, std::unique_ptr<llvm::Module> &Mod){
     for(const auto &Function : *Mod){
         for(const auto &BasicBlock : Function){
             for(const auto &Instruction : BasicBlock){
                 // for x = alloca ..., introduce x points to m_x, where m_x is a new memoryobject allocated by this alloca (x, m_x, points-to)
                 if(const auto &Alloca = llvm::dyn_cast<llvm::AllocaInst>(&Instruction)){
                     // create new memory object for lhs and rhs.
-                    auto rhs = MemoryObject();
-                    auto lhs = getMemoryObjectFromPtr(memoryObjects, Alloca);
-                    memoryObjects.push_back(rhs);
+                    auto rhs = parser.getMemoryObjectIndexFromPtr(Alloca, true);
+                    auto lhs = parser.getMemoryObjectIndexFromPtr(Alloca, false);
                     // add constraints.
+                    // todo: the id of a memoryobject is duplicated with the index returned by getMemoryObjectIndexFromPtr. remove either one.
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::PointsTo));
 
                 }
@@ -97,8 +89,8 @@ void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Co
                     const auto &PointerOperand = Store->getPointerOperand();
                     const auto &ValueOperand = Store->getValueOperand();
 
-                    auto lhs = getMemoryObjectFromPtr(memoryObjects, PointerOperand);
-                    auto rhs = getMemoryObjectFromPtr(memoryObjects, ValueOperand);
+                    auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
+                    auto rhs = parser.getMemoryObjectIndexFromPtr(ValueOperand, false);
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Store));
                 }
 
@@ -106,8 +98,8 @@ void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Co
                 if(const auto &Load = llvm::dyn_cast<llvm::LoadInst>(&Instruction)){
                     const auto &PointerOperand = Load->getPointerOperand();
 
-                    auto lhs = getMemoryObjectFromPtr(memoryObjects, PointerOperand);
-                    auto rhs = getMemoryObjectFromPtr(memoryObjects, Load);
+                    auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
+                    auto rhs = parser.getMemoryObjectIndexFromPtr(Load, false);
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Load));
                 }
                 
@@ -118,8 +110,8 @@ void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Co
                         continue;
                     }
 
-                    auto lhs = getMemoryObjectFromPtr(memoryObjects, PointerOperand);
-                    auto rhs = getMemoryObjectFromPtr(memoryObjects, BitCast);
+                    auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
+                    auto rhs = parser.getMemoryObjectIndexFromPtr(BitCast, false);
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
                 }
             
@@ -132,8 +124,8 @@ void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Co
                         auto argument = Call->getOperand(i);
 
                         if(parameter->getType()->isPointerTy()){
-                            auto lhs = getMemoryObjectFromPtr(memoryObjects, argument);
-                            auto rhs = getMemoryObjectFromPtr(memoryObjects, parameter);
+                            auto lhs = parser.getMemoryObjectIndexFromPtr(argument, false);
+                            auto rhs = parser.getMemoryObjectIndexFromPtr(parameter, false);
                             constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
                             constraints.push_back(Constraint(rhs, lhs, Constraint::ConstraintType::Copy));
                         }
@@ -174,22 +166,29 @@ int main(int argc, char** argv){
         llvm::outs() << "\n";
     }
 
+    // build inter-procedural call graph.
 
 
-    
+    // auto Andersen = AndersenPointerAnalysis(idug, mos);
+
+    llvm::outs() << "Andersen pointer analysis\n";
+    // collect constraints
+    // std::vector<MemoryObject> memoryObjects;
+    std::vector<Constraint> constraints;
+    collectConstraints(parser, constraints, Mod);
+    printConstraints(constraints);
+
+
 
     return 0;
 }
 
 
 
-    // std::vector<MemoryObject> memoryObjects;
-    // std::vector<Constraint> constraints;
+    
 
-    // // collect constraints
-    // collectConstraints(memoryObjects, constraints, Mod);
+    
 
-    // printConstraints(constraints);
     // auto cg = createConstraintGraph(constraints);
 
     // llvm::outs() << "Node numbers: " << cg.getNodeNumbers() << ", p-edge number: " << cg.getPedgeNumbers() << ", c-edge number: " << cg.getCedgeNumbers()

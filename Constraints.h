@@ -52,17 +52,17 @@ class Constraint{
         };
 
     private:
-        MemoryObject lhs;
-        MemoryObject rhs;
+        size_t lhs;
+        size_t rhs;
         ConstraintType type;
 
     public:
-        Constraint(MemoryObject lhs, MemoryObject rhs, ConstraintType type) : lhs(lhs), rhs(rhs), type(type) {}
-        MemoryObject getLhs() const{
+        Constraint(size_t lhs, size_t rhs, ConstraintType type) : lhs(lhs), rhs(rhs), type(type) {}
+        size_t getLhs() const{
             return lhs;
         }
 
-        MemoryObject getRhs() const{
+        size_t getRhs() const{
             return rhs;
         }
 
