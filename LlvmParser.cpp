@@ -1,5 +1,4 @@
 #include "LlvmParser.h"
-#include "llvm/IR/Instructions.h"
 
 void print0(const MemoryObject &m){
     if(m.getPtr()){
@@ -10,10 +9,9 @@ void print0(const MemoryObject &m){
     }
 }
 
-LLVMParser::LLVMParser(std::string irName) : topLevelVars{}, addressTakenVars{}, memoryObjects{}{
-    llvm::LLVMContext Context;
+LLVMParser::LLVMParser(std::string irName){
     llvm::SMDiagnostic Err;
-    module =  llvm::parseIRFile(irName, Err, Context);
+    module = llvm::parseIRFile(irName, Err, context);
     if (!module) {
         Err.print(irName.c_str(), llvm::errs());
         std::terminate();
@@ -57,7 +55,6 @@ size_t LLVMParser::getMemoryObjectIndexFromPtr(const llvm::Value *val, bool isAl
         auto mo = MemoryObject(val, isAllocated);
         
         memoryObjects.push_back(mo);
-        llvm::outs() << mo.getPtr() << " " << *mo.getPtr() << " (ID: " << mo.getId() << ")\n";
         return memoryObjects.size()-1;
     }
 }

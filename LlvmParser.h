@@ -8,6 +8,8 @@
 #include "llvm/IRReader/IRReader.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/Support/SourceMgr.h"
+#include "llvm/IR/Instructions.h"
+
 
 #include "llvm/Support/Signals.h"
 #include "llvm/Support/PrettyStackTrace.h"
@@ -18,28 +20,21 @@
 
 
 class LLVMParser{
-
+    llvm::LLVMContext context;
     std::unique_ptr<llvm::Module> module;
+    
     std::set<size_t> topLevelVars;
     std::set<size_t> addressTakenVars;
     // All memory objects in this programs.
     std::vector<MemoryObject> memoryObjects;
+    std::vector<std::unique_ptr<llvm::Module>> modules;
 
 
     public:
         LLVMParser(std::string irName);
         std::unique_ptr<llvm::Module>& getLLVMModule() {return module;}
+
         std::vector<MemoryObject>& getMemoryObjects() {
-            try{
-                for(auto mo : memoryObjects){
-                    llvm::outs() << mo.getPtr() << " " << *mo.getPtr() << " (ID: " << mo.getId() << ")\n";
-                }
-            }
-            catch(...){
-                llvm::sys::PrintStackTrace(llvm::errs());
-            }
-            
-            llvm::outs() << "12312\n";
             return memoryObjects;
             }
         std::set<size_t> getTopLevelVariables() {return topLevelVars;}

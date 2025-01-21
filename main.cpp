@@ -156,31 +156,30 @@ void collectConstraints(std::vector<MemoryObject> &memoryObjects, std::vector<Co
 int main(int argc, char** argv){
 
     auto parser = LLVMParser("/Users/jiaqi/Documents/PublicProject/GPU-FSPA/tests/misc/interSwap.ll");
-    std::unique_ptr<llvm::Module> &Mod = parser.getLLVMModule();
 
+
+    std::unique_ptr<llvm::Module> &Mod = parser.getLLVMModule();
 
     auto mos = parser.getMemoryObjects();
 
-    for(auto mo : mos){
-        print(mo);
-        llvm::outs() << "\n";
-    }
-
-
     llvm::outs() << "Top level vars:\n";
     for(auto &tlv : parser.getTopLevelVariables()){
-        // print(tlv);
-        llvm::outs() << tlv;
+        print(mos[tlv]);
         llvm::outs() << "\n";
     }
 
     llvm::outs() << "Address taken vars:\n";
     for(auto &atv : parser.getAddressTakenVariables()){
-        mos[atv];
+        print(mos[atv]);
         llvm::outs() << "\n";
     }
 
 
+
+    
+
+    return 0;
+}
 
 
 
@@ -307,5 +306,3 @@ int main(int argc, char** argv){
     // }
 
 
-    return 0;
-}

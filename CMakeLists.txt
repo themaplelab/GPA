@@ -19,3 +19,4 @@ llvm_map_components_to_libnames(llvm_libs support core irreader)
 
 target_link_libraries(gpu-fspa ${llvm_libs})
 target_compile_features(gpu-fspa PRIVATE cxx_std_17)
+# target_compile_options(gpu-fspa PRIVATE -fsanitize=address)
