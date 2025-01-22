@@ -20,7 +20,7 @@ class ConstraintGraph{
     std::map<size_t, std::set<size_t>> lEdges;
 
     public:
-        ConstraintGraph(const std::vector<Constraint> &constraints){
+        ConstraintGraph(std::vector<Constraint> &constraints){
             for(auto c : constraints){
                 auto lhs = c.getLhs();
                 auto rhs = c.getRhs();
