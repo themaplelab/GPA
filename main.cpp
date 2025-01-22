@@ -1,18 +1,13 @@
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IRReader/IRReader.h"
-#include "llvm/Support/SourceMgr.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/IR/Instructions.h"
-
-#include <memory>
-#include <vector>
-#include <algorithm>
-
 #include "Constraints.h"
 #include "ConstraintGraph.h"
 #include "LlvmParser.h"
-#include "AndersenPointerAnalysis.cpp"
+#include "PointerAnalysis.h"
+
+#include <memory>
+
+#include "llvm/IR/Module.h"
+#include "llvm/Support/raw_ostream.h"
+
 
 void print(const MemoryObject &m){
     if(m.getPtr()){
@@ -65,7 +60,6 @@ int main(int argc, char** argv){
     // build inter-procedural call graph.
 
 
-    // auto Andersen = AndersenPointerAnalysis(idug, mos);
     llvm::outs() << "Andersen pointer analysis\n";
     // collect constraints
 

@@ -1,23 +1,13 @@
 #ifndef GPA_LLVM_PARSER_H
 #define GPA_LLVM_PARSER_H
 
-#include <memory>
-#include <vector>
-#include <set>
-#include <unordered_set>
-#include <unordered_map>
-#include "llvm/IR/Module.h"
-#include "llvm/IRReader/IRReader.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/Support/SourceMgr.h"
-#include "llvm/IR/Instructions.h"
-
-
-#include "llvm/Support/Signals.h"
-#include "llvm/Support/PrettyStackTrace.h"
 #include "Constraints.h"
 
+#include <memory>
+#include <unordered_set>
+#include <unordered_map>
 
+#include "llvm/IR/Module.h"
 
 
 
@@ -25,8 +15,8 @@ class LLVMParser{
     llvm::LLVMContext context;
     std::unique_ptr<llvm::Module> module;
     
-    std::set<size_t> topLevelVars;
-    std::set<size_t> addressTakenVars;
+    std::unordered_set<size_t> topLevelVars;
+    std::unordered_set<size_t> addressTakenVars;
     // All memory objects in this programs.
     std::unordered_set<MemoryObject, MemoryObject::HashFunction> memoryObjects;
     std::unordered_map<int, MemoryObject> id2MemoryObjects;
@@ -41,8 +31,8 @@ class LLVMParser{
         MemoryObject getMemoryObject(size_t id){
             return id2MemoryObjects[id];
         }
-        std::set<size_t> getTopLevelVariables() {return topLevelVars;}
-        std::set<size_t> getAddressTakenVariables() {return addressTakenVars;}
+        std::unordered_set<size_t> getTopLevelVariables() {return topLevelVars;}
+        std::unordered_set<size_t> getAddressTakenVariables() {return addressTakenVars;}
         size_t getMemoryObjectIndexFromPtr(const llvm::Value *, bool);
 
     private:

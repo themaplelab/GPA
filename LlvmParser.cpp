@@ -1,5 +1,11 @@
 #include "LlvmParser.h"
 
+#include "llvm/IRReader/IRReader.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/Support/SourceMgr.h"
+#include "llvm/IR/Instructions.h"
+
+
 
 LLVMParser::LLVMParser(std::string irName){
     llvm::SMDiagnostic Err;

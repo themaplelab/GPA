@@ -1,13 +1,15 @@
 #ifndef GPA_POINTER_ANALYSIS_H
 #define GPA_POINTER_ANALYSIS_H
 
-#include <vector>
-
+#include "ConstraintGraph.h"
 #include "Constraints.h"
 #include "LlvmParser.h"
-#include <memory>
+
 #include "llvm/IR/Module.h"
-#include "ConstraintGraph.h"
+
+#include <vector>
+#include <memory>
+
 
 
 

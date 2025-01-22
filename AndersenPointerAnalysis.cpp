@@ -1,5 +1,7 @@
 #include "PointerAnalysis.h"
 
+#include "llvm/IR/Instructions.h"
+
 
 void AndersenPointerAnalysis::collectConstraints(LLVMParser &parser, std::unique_ptr<llvm::Module> &Mod){
     for(const auto &Function : *Mod){
@@ -13,7 +15,6 @@ void AndersenPointerAnalysis::collectConstraints(LLVMParser &parser, std::unique
 
                     llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", p)\n"; 
                     // add constraints.
-                    // todo: the id of a memoryobject is duplicated with the index returned by getMemoryObjectIndexFromPtr. remove either one.
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::PointsTo));
 
                 }
