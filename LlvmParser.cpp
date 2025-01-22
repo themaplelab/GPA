@@ -39,14 +39,19 @@ void LLVMParser::populateTopLevelAndAddressTakenVariables(){
     return the unique id of the memoryobject corresponds to "val".
 */
 size_t LLVMParser::getMemoryObjectIndexFromPtr(const llvm::Value *val, bool isAllocated){
-    auto iter = std::find_if(memoryObjects.begin(), memoryObjects.end(), [&val, isAllocated](const MemoryObject &mo) -> bool {return mo.getPtr() == val && mo.isAllocatedMemoryObject() == isAllocated;});
+
+    auto searchMo = MemoryObject::getSearchMemoryObject(val, isAllocated);
+    auto iter = memoryObjects.find(searchMo);
+
     if(iter != memoryObjects.end()){
-        return iter - memoryObjects.begin();
+        return iter->getId();
     }
     else{
         auto mo = MemoryObject(val, isAllocated);
-        
-        memoryObjects.push_back(mo);
-        return memoryObjects.size()-1;
+        memoryObjects.insert(mo);
+        // using embrace is impoertant to avoid unintented creation of new memoryobject.
+        id2MemoryObjects.try_emplace(mo.getId(), mo);
+
+        return mo.getId();
     }
 }

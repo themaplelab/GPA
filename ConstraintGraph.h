@@ -13,11 +13,11 @@
 
 class ConstraintGraph{
 
-    std::set<MemoryObject> nodes;
-    std::map<MemoryObject, std::set<MemoryObject>> pEdges;
-    std::map<MemoryObject, std::set<MemoryObject>> cEdges;
-    std::map<MemoryObject, std::set<MemoryObject>> sEdges;
-    std::map<MemoryObject, std::set<MemoryObject>> lEdges;
+    std::set<size_t> nodes;
+    std::map<size_t, std::set<size_t>> pEdges;
+    std::map<size_t, std::set<size_t>> cEdges;
+    std::map<size_t, std::set<size_t>> sEdges;
+    std::map<size_t, std::set<size_t>> lEdges;
 
     public:
         ConstraintGraph(const std::vector<Constraint> &constraints){
@@ -98,32 +98,32 @@ class ConstraintGraph{
             return res;
         }
 
-        std::set<MemoryObject> getNodes() const {
+        std::set<size_t> getNodes() const {
             return nodes;
         }
 
-        std::map<MemoryObject, std::set<MemoryObject>> getPedges() const{
+        std::map<size_t, std::set<size_t>> getPedges() const{
             return pEdges;
         }
 
-        std::map<MemoryObject, std::set<MemoryObject>> getSedges() const{
+        std::map<size_t, std::set<size_t>> getSedges() const{
             return sEdges;
         }
 
-        std::map<MemoryObject, std::set<MemoryObject>> getLedges() const{
+        std::map<size_t, std::set<size_t>> getLedges() const{
             return lEdges;
         }
 
-        std::map<MemoryObject, std::set<MemoryObject>> getCedges() const{
+        std::map<size_t, std::set<size_t>> getCedges() const{
             return cEdges;
         }
 
-        bool addCedge(MemoryObject from, MemoryObject to){
+        bool addCedge(size_t from, size_t to){
             auto changed = cEdges[from].insert(to).second;
             return changed;
         }
 
-        bool addPedge(MemoryObject from, MemoryObject to){
+        bool addPedge(size_t from, size_t to){
             auto changed = pEdges[from].insert(to).second;
             return changed;
         }

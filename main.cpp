@@ -155,15 +155,27 @@ int main(int argc, char** argv){
     auto mos = parser.getMemoryObjects();
 
     llvm::outs() << "Top level vars:\n";
-    for(auto &tlv : parser.getTopLevelVariables()){
-        print(mos[tlv]);
+    for(auto tlv : parser.getTopLevelVariables()){
+        llvm::outs() << tlv << " ";
+        print(parser.getMemoryObject(tlv));
         llvm::outs() << "\n";
     }
 
     llvm::outs() << "Address taken vars:\n";
     for(auto &atv : parser.getAddressTakenVariables()){
-        print(mos[atv]);
+        llvm::outs() << atv << " ";
+        print(parser.getMemoryObject(atv));
         llvm::outs() << "\n";
+    }
+
+    llvm::outs() << "Current memory objects in set:\n";
+    for(auto m : parser.getMemoryObjects()){
+        llvm::outs() << *m.getPtr() << " (" << m.getId() << ", " << m.isAllocatedMemoryObject() << ")\n";
+    }
+
+    llvm::outs() << "Current memory objects in map:\n";
+    for(auto p : parser.getMemoryObjectMap()){
+        llvm::outs() << p.first << " " << *(p.second).getPtr() << " (" << p.second.getId() << ", " << p.second.isAllocatedMemoryObject() << ")\n";
     }
 
     // build inter-procedural call graph.
@@ -171,6 +183,7 @@ int main(int argc, char** argv){
 
     // auto Andersen = AndersenPointerAnalysis(idug, mos);
 
+    // todo: below is not correct yet.
     llvm::outs() << "Andersen pointer analysis\n";
     // collect constraints
     // std::vector<MemoryObject> memoryObjects;
