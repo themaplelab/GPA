@@ -15,6 +15,11 @@ LLVMParser::LLVMParser(std::string irName){
 
 void LLVMParser::populateTopLevelAndAddressTakenVariables(){
     for(auto &F : *module){
+        for(auto &arg : F.args()){
+            // todo: only build parameter of pointer type.
+            auto lhs = getMemoryObjectIndexFromPtr(&arg, false);
+            topLevelVars.insert(lhs);
+        }
         for(auto &BB : F){
             for(auto &I : BB){
                 if(const auto Alloca = llvm::dyn_cast<llvm::AllocaInst>(&I)){

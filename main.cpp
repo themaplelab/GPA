@@ -78,6 +78,8 @@ void collectConstraints(LLVMParser &parser, std::vector<Constraint> &constraints
                     // create new memory object for lhs and rhs.
                     auto rhs = parser.getMemoryObjectIndexFromPtr(Alloca, true);
                     auto lhs = parser.getMemoryObjectIndexFromPtr(Alloca, false);
+
+                    llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", p)\n"; 
                     // add constraints.
                     // todo: the id of a memoryobject is duplicated with the index returned by getMemoryObjectIndexFromPtr. remove either one.
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::PointsTo));
@@ -89,17 +91,31 @@ void collectConstraints(LLVMParser &parser, std::vector<Constraint> &constraints
                     const auto &PointerOperand = Store->getPointerOperand();
                     const auto &ValueOperand = Store->getValueOperand();
 
+                    // ignore storing non-pointer values for now.
+                    if(!ValueOperand->getType()->isPointerTy()){
+                        continue;
+                    }
+
                     auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
                     auto rhs = parser.getMemoryObjectIndexFromPtr(ValueOperand, false);
+                    llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", s)\n"; 
+
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Store));
                 }
 
                 // for x = load y, it means x = *y, add edge y--l-->x, (y, x, load)
                 if(const auto &Load = llvm::dyn_cast<llvm::LoadInst>(&Instruction)){
+                    // ignore storing non-pointer values for now.
+                    if(!Load->getType()->isPointerTy()){
+                        continue;
+                    }
+
                     const auto &PointerOperand = Load->getPointerOperand();
 
                     auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
                     auto rhs = parser.getMemoryObjectIndexFromPtr(Load, false);
+                    llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", l)\n"; 
+
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Load));
                 }
                 
@@ -112,6 +128,9 @@ void collectConstraints(LLVMParser &parser, std::vector<Constraint> &constraints
 
                     auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
                     auto rhs = parser.getMemoryObjectIndexFromPtr(BitCast, false);
+                    llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", c)\n"; 
+
+                    
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
                 }
             
@@ -126,15 +145,17 @@ void collectConstraints(LLVMParser &parser, std::vector<Constraint> &constraints
                         if(parameter->getType()->isPointerTy()){
                             auto lhs = parser.getMemoryObjectIndexFromPtr(argument, false);
                             auto rhs = parser.getMemoryObjectIndexFromPtr(parameter, false);
+                            llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", c)\n"; 
+
                             constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Copy));
-                            constraints.push_back(Constraint(rhs, lhs, Constraint::ConstraintType::Copy));
+                            // constraints.push_back(Constraint(rhs, lhs, Constraint::ConstraintType::Copy));
                         }
 
                         ++i;
                     }
-                    
-                    
                 }
+
+                //todo : add return instructions handling
             
             }
         }
@@ -168,15 +189,15 @@ int main(int argc, char** argv){
         llvm::outs() << "\n";
     }
 
-    llvm::outs() << "Current memory objects in set:\n";
-    for(auto m : parser.getMemoryObjects()){
-        llvm::outs() << *m.getPtr() << " (" << m.getId() << ", " << m.isAllocatedMemoryObject() << ")\n";
-    }
+    // llvm::outs() << "Current memory objects in set:\n";
+    // for(auto m : parser.getMemoryObjects()){
+    //     llvm::outs() << *m.getPtr() << " (" << m.getId() << ", " << m.isAllocatedMemoryObject() << ")\n";
+    // }
 
-    llvm::outs() << "Current memory objects in map:\n";
-    for(auto p : parser.getMemoryObjectMap()){
-        llvm::outs() << p.first << " " << *(p.second).getPtr() << " (" << p.second.getId() << ", " << p.second.isAllocatedMemoryObject() << ")\n";
-    }
+    // llvm::outs() << "Current memory objects in map:\n";
+    // for(auto p : parser.getMemoryObjectMap()){
+    //     llvm::outs() << p.first << " " << *(p.second).getPtr() << " (" << p.second.getId() << ", " << p.second.isAllocatedMemoryObject() << ")\n";
+    // }
 
     // build inter-procedural call graph.
 
