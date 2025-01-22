@@ -126,3 +126,120 @@ void AndersenPointerAnalysis::printConstraints(){
 void AndersenPointerAnalysis::createConstraintGraph(){
     cg = std::make_unique<ConstraintGraph>(constraints);
 }
+
+void AndersenPointerAnalysis::analyze(){
+    auto worklist = cg->getNodes();
+
+        while(!worklist.empty()){
+        std::set<size_t> newWorklist;
+
+        for(auto node : worklist){
+
+            // apply store rule
+            auto stores = std::set<size_t>();
+            if(cg->getSedges().count(node)){
+                stores = cg->getSedges().at(node);
+            }
+            auto pts = std::set<size_t>();
+            if(cg->getPedges().count(node)){
+                pts = cg->getPedges().at(node);
+            }
+
+            for(auto store : stores){
+                bool changed = false;
+                for(auto pt : pts){
+                    changed = cg->addCedge(store, pt);
+                }
+                if(changed){
+                    newWorklist.insert(store);
+                }
+
+            }
+
+
+            // apply load rule
+            pts = std::set<size_t>();
+            if(cg->getPedges().count(node)){
+                pts = cg->getPedges().at(node);
+            }
+            auto loads = std::set<size_t>();
+            if(cg->getLedges().count(node)){
+                loads = cg->getLedges().at(node);
+            }
+
+            for(auto pt : pts){
+                bool changed = false;
+                for(auto load : loads){
+                    changed = cg->addCedge(pt, load);
+                }
+                if(changed){
+                    newWorklist.insert(pt);
+                }
+            }
+
+
+            // apply copy rule
+            auto copys = std::set<size_t>();
+            if(cg->getCedges().count(node)){
+                copys = cg->getCedges().at(node);
+            }
+            pts = std::set<size_t>();
+            if(cg->getPedges().count(node)){
+                pts = cg->getPedges().at(node);
+            }
+
+            for(auto copy : copys){
+                bool changed = false;
+                for(auto pt : pts){
+                    changed = cg->addPedge(copy, pt);
+                }
+                if(changed){
+                    newWorklist.insert(copy);
+                }
+            }
+
+        }
+
+        worklist = newWorklist;
+    }
+}
+
+void AndersenPointerAnalysis::printPEdge(){
+    for(auto p : cg->getPedges()){
+        llvm::outs() << p.first << " ===P>\n";
+
+        for(auto pointee : p.second){
+            llvm::outs() << "\t\t" << pointee << "\n";;
+        }
+    }
+}
+
+void AndersenPointerAnalysis::printCEdge(){
+    for(auto p : cg->getCedges()){
+        llvm::outs() << p.first << " ===P>\n";
+
+        for(auto pointee : p.second){
+            llvm::outs() << "\t\t" << pointee << "\n";;
+        }
+    }
+}
+
+void AndersenPointerAnalysis::printLEdge(){
+    for(auto p : cg->getLedges()){
+        llvm::outs() << p.first << " ===P>\n";
+
+        for(auto pointee : p.second){
+            llvm::outs() << "\t\t" << pointee << "\n";;
+        }
+    }
+}
+
+void AndersenPointerAnalysis::printSEdge(){
+    for(auto p : cg->getSedges()){
+        llvm::outs() << p.first << " ===P>\n";
+
+        for(auto pointee : p.second){
+            llvm::outs() << "\t\t" << pointee << "\n";;
+        }
+    }
+}

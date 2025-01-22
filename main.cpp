@@ -23,6 +23,8 @@ void print(const MemoryObject &m){
     }
 }
 
+// todo: remove duplicate header
+// todo: remove deadcode
 
 
 
@@ -74,7 +76,14 @@ int main(int argc, char** argv){
 
     llvm::outs() << "Node numbers: " << cg->getNodeNumbers() << ", p-edge number: " << cg->getPedgeNumbers() << ", c-edge number: " << cg->getCedgeNumbers()
         << ", s-edge number: " << cg->getSedgeNumbers() << ", l-edge number: " << cg->getLedgeNumbers() << "\n";
+
+    andersen.analyze();
     
+    // print detail of calculated cg
+    andersen.printPEdge();
+    andersen.printCEdge();
+    andersen.printLEdge();
+    andersen.printSEdge();
 
 
 
@@ -90,114 +99,10 @@ int main(int argc, char** argv){
 
     
 
-    // // create worklist
-    // auto worklist = cg.getNodes();
-
-    // while(!worklist.empty()){
-    //     std::set<MemoryObject> newWorklist;
-
-    //     for(auto node : worklist){
-
-    //         // apply store rule
-    //         auto stores = std::set<MemoryObject>();
-    //         if(cg.getSedges().count(node)){
-    //             stores = cg.getSedges().at(node);
-    //         }
-    //         auto pts = std::set<MemoryObject>();
-    //         if(cg.getPedges().count(node)){
-    //             pts = cg.getPedges().at(node);
-    //         }
-
-    //         for(auto store : stores){
-    //             bool changed = false;
-    //             for(auto pt : pts){
-    //                 changed = cg.addCedge(store, pt);
-    //             }
-    //             if(changed){
-    //                 newWorklist.insert(store);
-    //             }
-
-    //         }
+    
 
 
-    //         // apply load rule
-    //         pts = std::set<MemoryObject>();
-    //         if(cg.getPedges().count(node)){
-    //             pts = cg.getPedges().at(node);
-    //         }
-    //         auto loads = std::set<MemoryObject>();
-    //         if(cg.getLedges().count(node)){
-    //             loads = cg.getLedges().at(node);
-    //         }
 
-    //         for(auto pt : pts){
-    //             bool changed = false;
-    //             for(auto load : loads){
-    //                 changed = cg.addCedge(pt, load);
-    //             }
-    //             if(changed){
-    //                 newWorklist.insert(pt);
-    //             }
-    //         }
-
-
-    //         // apply copy rule
-    //         auto copys = std::set<MemoryObject>();
-    //         if(cg.getCedges().count(node)){
-    //             copys = cg.getCedges().at(node);
-    //         }
-    //         pts = std::set<MemoryObject>();
-    //         if(cg.getPedges().count(node)){
-    //             pts = cg.getPedges().at(node);
-    //         }
-
-    //         for(auto copy : copys){
-    //             bool changed = false;
-    //             for(auto pt : pts){
-    //                 changed = cg.addPedge(copy, pt);
-    //             }
-    //             if(changed){
-    //                 newWorklist.insert(copy);
-    //             }
-    //         }
-
-    //     }
-
-    //     worklist = newWorklist;
-    // }
-
-    // print detail of calculated cg
-    // for(auto p : cg.getPedges()){
-    //     print(p.first);
-    //     llvm::outs() << " ===>\n";
-
-    //     for(auto pointee : p.second){
-    //         llvm::outs() << "\t\t";
-    //         print(pointee);
-    //         llvm::outs() << "\n";
-    //     }
-    // }
-
-    // for(auto p : cg.getCedges()){
-    //     print(p.first);
-    //     llvm::outs() << " ===>\n";
-
-    //     for(auto pointee : p.second){
-    //         llvm::outs() << "\t\t";
-    //         print(pointee);
-    //         llvm::outs() << "\n";
-    //     }
-    // }
-
-    // for(auto p : cg.getLedges()){
-    //     print(p.first);
-    //     llvm::outs() << " ===>\n";
-
-    //     for(auto pointee : p.second){
-    //         llvm::outs() << "\t\t";
-    //         print(pointee);
-    //         llvm::outs() << "\n";
-    //     }
-    // }
+    
 
 

@@ -38,6 +38,13 @@ class AndersenPointerAnalysis : public PointerAnalysis{
             return cg;
         }
 
+        void analyze();
+        void printPEdge();
+        void printCEdge();
+        void printLEdge();
+        void printSEdge();
+
+
     private:
         void collectConstraints(LLVMParser &parser, std::unique_ptr<llvm::Module> &Mod);
         void createConstraintGraph();
