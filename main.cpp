@@ -2,6 +2,7 @@
 #include "ConstraintGraph.h"
 #include "LlvmParser.h"
 #include "PointerAnalysis.h"
+#include "SSABuilder.h"
 
 #include <memory>
 
@@ -18,7 +19,6 @@ void print(const MemoryObject &m){
     }
 }
 
-// todo: remove duplicate header
 // todo: remove deadcode
 
 
@@ -78,6 +78,15 @@ int main(int argc, char** argv){
     andersen.printCEdge();
     andersen.printLEdge();
     andersen.printSEdge();
+
+    andersen.printStatistics();
+
+    llvm::outs() << "Dom tree output\n";
+
+    for(auto &Func : *Mod){
+        SSABuilder builder(&(Func.getEntryBlock()));
+        builder.printDomTree();
+    }
 
 
 

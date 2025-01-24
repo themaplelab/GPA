@@ -45,6 +45,7 @@ class AndersenPointerAnalysis : public PointerAnalysis{
         void printCEdge();
         void printLEdge();
         void printSEdge();
+        void printStatistics();
 
 
     private:

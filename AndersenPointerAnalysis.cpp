@@ -44,9 +44,9 @@ void AndersenPointerAnalysis::collectConstraints(LLVMParser &parser, std::unique
                     }
 
                     const auto &PointerOperand = Load->getPointerOperand();
-
                     auto lhs = parser.getMemoryObjectIndexFromPtr(PointerOperand, false);
                     auto rhs = parser.getMemoryObjectIndexFromPtr(Load, false);
+
                     llvm::outs() << Instruction << " generate constraint (" << lhs << ", " << rhs << ", l)\n"; 
 
                     constraints.push_back(Constraint(lhs, rhs, Constraint::ConstraintType::Load));
@@ -217,7 +217,7 @@ void AndersenPointerAnalysis::printPEdge(){
 
 void AndersenPointerAnalysis::printCEdge(){
     for(auto p : cg->getCedges()){
-        llvm::outs() << p.first << " ===P>\n";
+        llvm::outs() << p.first << " ===C>\n";
 
         for(auto pointee : p.second){
             llvm::outs() << "\t\t" << pointee << "\n";;
@@ -227,7 +227,7 @@ void AndersenPointerAnalysis::printCEdge(){
 
 void AndersenPointerAnalysis::printLEdge(){
     for(auto p : cg->getLedges()){
-        llvm::outs() << p.first << " ===P>\n";
+        llvm::outs() << p.first << " ===L>\n";
 
         for(auto pointee : p.second){
             llvm::outs() << "\t\t" << pointee << "\n";;
@@ -237,10 +237,35 @@ void AndersenPointerAnalysis::printLEdge(){
 
 void AndersenPointerAnalysis::printSEdge(){
     for(auto p : cg->getSedges()){
-        llvm::outs() << p.first << " ===P>\n";
+        llvm::outs() << p.first << " ===S>\n";
 
         for(auto pointee : p.second){
             llvm::outs() << "\t\t" << pointee << "\n";;
         }
     }
+}
+
+void AndersenPointerAnalysis::printStatistics(){
+    // avg pts size, min pts size, max pts size
+    size_t totalPointees = 0;
+    size_t totalPointsToRecord = 0;
+    size_t minPointsToSetSize = INT64_MAX;
+    size_t maxPointsToSetSize = 0;
+
+    for(auto p : cg->getPedges()){
+        totalPointsToRecord += 1;
+        size_t currentPtsSize = 0;
+        for(auto pointee : p.second){
+            currentPtsSize += 1;
+        }
+        minPointsToSetSize = std::min(minPointsToSetSize, currentPtsSize);
+        maxPointsToSetSize = std::max(maxPointsToSetSize, currentPtsSize);
+        totalPointees += currentPtsSize;
+
+    }
+
+    llvm::outs() << "Average points-to set size: " << static_cast<double>(totalPointees) / totalPointsToRecord << "\n";
+    llvm::outs() << "Minimal points-to set size: " << minPointsToSetSize << "\n";
+    llvm::outs() << "Maximum points-to set size: " << maxPointsToSetSize << "\n";
+
 }
