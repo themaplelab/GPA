@@ -84,6 +84,7 @@ int main(int argc, char** argv){
     llvm::outs() << "Dom tree output\n";
 
     for(auto &Func : *Mod){
+        llvm::outs() << Func.getName().str() << "\n";
         SSABuilder builder(&(Func.getEntryBlock()));
         builder.printDomTree();
     }

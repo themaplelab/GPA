@@ -10,16 +10,17 @@
 class TreeNode{
 
     public:
-        TreeNode(const llvm::BasicBlock *v) : val(v) {}
+        TreeNode(const llvm::BasicBlock *v) : val(v){
+        }
         void addChild(std::unique_ptr<TreeNode> &child){
-            children.push_back(std::move(child));
+            children.push_back(child);
         }
 
-        std::vector<std::unique_ptr<TreeNode>>& getChildren() {return children;}
+        std::vector<std::reference_wrapper<std::unique_ptr<TreeNode>>> getChildren() {return children;}
         const llvm::BasicBlock* getBasicBlock() {return val;}
 
     private:
-        std::vector<std::unique_ptr<TreeNode>> children;
+        std::vector<std::reference_wrapper<std::unique_ptr<TreeNode>>> children;
         const llvm::BasicBlock* val;
 
 };
