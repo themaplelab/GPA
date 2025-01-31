@@ -17,9 +17,7 @@ void SSABuilder::printDomTree(){
     while(!worklist.empty()){
         auto current = worklist.front();
         worklist.pop();
-        llvm::outs() << "Current: " << bb2id[current] << "\n";
         auto &node = bb2TreeNode.at(current);
-        llvm::outs() << "Current: " << bool(node) << "\n";
         
 
 
@@ -27,17 +25,14 @@ void SSABuilder::printDomTree(){
             continue;
         }
         visited.insert(current);
-        llvm::outs() << "Current: " << node->getChildren().size() << "\n";
 
         for(auto child : node->getChildren()){
             llvm::outs() << bb2id.at(current) << " -- dom --> " << bb2id.at((child.get()->getBasicBlock())) << "\n";
             worklist.push(child.get()->getBasicBlock());
         }
-        llvm::outs() << worklist.size() << " \n"; 
 
     }
 
-    llvm::outs() << "End of print \n"; 
 
 }
 
@@ -55,18 +50,10 @@ void SSABuilder::buildDominatorTree(){
         if(visited.count(current)){
             continue;
         }
-        //bug : not using visited
         visited.insert(current);
 
-        llvm::outs() << "Current: " << *(current->getFirstNonPHIOrDbg()) << "\n";
         for(auto child : immediateDominatedBy[current]){
-            llvm::outs() << "Child: " << bb2id[child] << "\n";
-            // llvm::outs() << bb2TreeNode.count(current) << " " << bb2TreeNode.count(child) << "\n";
-            llvm::outs() << bool(bb2TreeNode.at(current)) << " " << bool(bb2TreeNode.at(child)) << "\n";
-
-
             bb2TreeNode.at(current)->addChild(bb2TreeNode.at(child));
-            llvm::outs() << bool(bb2TreeNode.at(current)) << " " << bool(bb2TreeNode.at(child)) << "\n";
 
             worklist.push(child);
         }
@@ -112,7 +99,6 @@ void SSABuilder::computeDominatorSet(){
         auto node = std::make_unique<TreeNode>(BB);
         
         bb2TreeNode.try_emplace(BB, std::move(node));
-        llvm::outs() << bool(bb2TreeNode[BB]) << "aaaaaaaa\n";
         
     }
 
@@ -166,6 +152,32 @@ void SSABuilder::findAllBasicBlocks(){
 
         for(auto child : llvm::successors(current)){
             worklist.push(child);
+        }
+    }
+}
+
+void SSABuilder::computeDominanceFrontier(){
+    // Use dfs to achieve bottom-up traversal
+    auto &root = bb2TreeNode.at(entry);
+    postOrderTraversal(root);
+}
+
+void SSABuilder::postOrderTraversal(std::unique_ptr<TreeNode>& root){
+    for(auto child : root->getChildren()){
+        postOrderTraversal(child);
+    }
+    DominanceFrontier.try_emplace(root->getBasicBlock(), std::set<const llvm::BasicBlock*>{});
+    for(auto node : llvm::successors(root->getBasicBlock())){
+        if(immediateDominatorMap.at(node) != root->getBasicBlock()){
+            DominanceFrontier.at(root->getBasicBlock()).insert(node);
+        }
+    }
+
+    for(auto child : root->getChildren()){
+        for(auto node : DominanceFrontier.at(child.get()->getBasicBlock())){
+            if(immediateDominatorMap.at(node) != root->getBasicBlock()){
+                DominanceFrontier.at(root->getBasicBlock()).insert(node);
+            }
         }
     }
 }
