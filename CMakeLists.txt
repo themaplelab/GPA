@@ -7,9 +7,7 @@ project(
   VERSION 1.0
   DESCRIPTION "An external project example using SVF as a library"
 #   HOMEPAGE_URL "https://github.com/SVF-tools/gpa"
-  LANGUAGES C CXX)
-
-
+  LANGUAGES C CXX CUDA)
 
 
 # Check if the LLVM_DIR environment variable is defined and set it accordingly
@@ -27,10 +25,11 @@ endif()
 if (DEFINED ENV{LLVM_DIR})
     # Set the C++ standard to C++17 and configure compiler flags based on the build type
     set(CMAKE_CXX_STANDARD 17)
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        set(CMAKE_CXX_FLAGS "-fPIC -std=gnu++17 -O0 -fno-rtti -Wno-deprecated -Werror")
-    else()
-        set(CMAKE_CXX_FLAGS "-fPIC -std=gnu++17 -O3 -fno-rtti -Wno-deprecated -Werror")
+    if(NOT LLVM_ENABLE_RTTI)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
+    endif()
+    if(NOT LLVM_ENABLE_EH)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>)
     endif()
     set(CMAKE_C_FLAGS "-fPIC")
     # Check if compiler is GNU and version is less than 9
@@ -168,12 +167,56 @@ include_directories(SYSTEM ${Z3_INCLUDES})
 #   Everything below this line is specific to this project (user/application code).
 # ==============================================================================
 
+list(APPEND CMAKE_SYSTEM_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+# (belt & suspenders if you want)
+list(APPEND CMAKE_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
 
+set(CMAKE_CUDA_RUNTIME_LIBRARY Shared)
+set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+set(CMAKE_CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+set(CUDAToolkit_USE_STATIC_CUDA_RUNTIME OFF CACHE BOOL "" FORCE)
 # Define the primary (minimal) example using SVF as library in an executable
-add_executable(gpa src/main.cpp)
+
+if(NOT CMAKE_CUDA_ARCHITECTURES)
+  set(CMAKE_CUDA_ARCHITECTURES 80)   # A100 default example; change to your target
+endif()
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+
+find_package(CUDAToolkit REQUIRED)
+
+add_executable(gpa src/main.cpp src/gpa.cu src/sbv_gpu.cu)
+
+set_target_properties(gpa PROPERTIES
+  CUDA_RUNTIME_LIBRARY Shared
+  CUDA_SEPARABLE_COMPILATION ON
+  POSITION_INDEPENDENT_CODE ON
+)
 
 # Only link against SVF; LLVM & Z3 dependencies are resolved internally
-target_link_libraries(gpa PRIVATE ${llvm_libs} ${SVF_LIB})
+target_link_libraries(gpa PRIVATE ${llvm_libs} ${SVF_LIB} CUDA::cudart)
+
+
+get_target_property(_cudart_so CUDA::cudart IMPORTED_LOCATION)
+if(NOT _cudart_so)
+  # fallback to the standard location
+  set(_cudart_so "/usr/local/cuda/lib64/libcudart.so")
+endif()
+get_filename_component(_cuda_libdir "${_cudart_so}" DIRECTORY)
+
+# Ensure the final link has -L/usr/local/cuda/lib64
+target_link_directories(gpa PRIVATE "${_cuda_libdir}")
+# (nice to have) embed rpath for runtime
+target_link_options(gpa PRIVATE "-Wl,-rpath,${_cuda_libdir}")
+
+# Provide cudadevrt explicitly (device runtime is always static)
+if(TARGET CUDA::cudadevrt)
+  target_link_libraries(gpa PRIVATE CUDA::cudadevrt)
+elseif(EXISTS "${_cuda_libdir}/libcudadevrt.a")
+  target_link_libraries(gpa PRIVATE "${_cuda_libdir}/libcudadevrt.a")
+else()
+  message(FATAL_ERROR "libcudadevrt.a not found in ${_cuda_libdir}")
+endif()
 
 # Set the executable example to install to the local directory (as prefix)
 install(TARGETS gpa RUNTIME DESTINATION bin)

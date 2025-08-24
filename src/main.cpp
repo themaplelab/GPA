@@ -12,6 +12,7 @@
 #include <filesystem>
 #include "programl.h"
 #include "SVFIR/SVFIR.h"
+#include "gpa.cuh"
 
 
 
@@ -802,7 +803,9 @@ void dumpGroundTruthPtgToFile(std::string fileLoc, std::string fileName, SVF::Me
   parentDir /= fileName;
   std::string fullPath = parentDir.string();
 
-  std::ofstream outFile(fullPath + ".out");
+  // std::ofstream outFile(fullPath + ".out");
+  std::ofstream outFile(fileName + ".out");
+
   if(!outFile){
     outs() << "ERROR! Cannot create file!\n";
     return;
@@ -823,9 +826,13 @@ void dumpNecessaryFilesForGPU(std::string fileLoc, std::string fileName, SVF::Me
   std::string fullPath = parentDir.string();
   // std::cout << fullPath << "\n";
 
-  dumpPtgToFile(fullPath+"-initialPtg", mssa);
-  dumpNodeId2RelatedMrIdsMapToFile(fullPath, mssa);
-  dumpNodeId2mrIdAndVerMapToFile(fullPath, mssa);
+  // dumpPtgToFile(fullPath+"-initialPtg", mssa);
+  // dumpNodeId2RelatedMrIdsMapToFile(fullPath, mssa);
+  // dumpNodeId2mrIdAndVerMapToFile(fullPath, mssa);
+
+  dumpPtgToFile(fileName+"-initialPtg", mssa);
+  dumpNodeId2RelatedMrIdsMapToFile(fileName, mssa);
+  dumpNodeId2mrIdAndVerMapToFile(fileName, mssa);
 }
 
 std::string getGraphOutputName(std::string filename){
@@ -1231,6 +1238,10 @@ int main(int argc, char **argv) {
     graphOut << graph.dumpGraph();
     graphOut.close();
   }
+
+  gpamain(graphOutputFileName);
+
+  std::cout << "11\n";
   
 
   return 0;
