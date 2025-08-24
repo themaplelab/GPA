@@ -1171,6 +1171,78 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
 
 }
 
+struct PointsToGraph{
+	std::map<u_int32_t, std::map<std::string, std::set<u_int32_t>>> graph;
+	u_int32_t nodeNum;
+	u_int32_t size;
+	std::map<u_int32_t, std::set<u_int32_t>> ptrIdToDerivedMrIdsMap;
+	std::map<u_int32_t, std::tuple<std::string, u_int32_t, u_int32_t>> nodeId2mrIdAndVerMap;
+
+
+	void printRealPtg(){
+		// print points-to set
+		std::cout << "printing points-to set.\nMax id is: " << nodeNum << "\nTotal entries: " << size << "\n";
+		std::vector<std::string> edgeType{"p", "c", "s", "l", "p_d", "p_u", "p_c", "d", "u", "n", "k", "a"};
+		for(auto et : edgeType){
+			for(u_int32_t i = 0; i < nodeNum; ++i){
+				if(graph.count(i) && graph.at(i).count(et)){
+					std::cout << i << " == " << et << " ==> {";
+					for(auto pointee : graph.at(i).at(et)){
+						std::cout << pointee << " ";
+					}
+					std::cout << "}\n";
+				}
+			}
+		}
+	}
+	void printNodeId2mrIdAndVerMap(){
+		std::cout << "Printing nodeId2mrIdAndVerMap.\n";
+		for(auto p : nodeId2mrIdAndVerMap){
+			auto nodeId = p.first;
+      auto [funName, mrId, mrVer] = p.second;
+      std::cout << nodeId << " ==> " << funName << ":MR_" << mrId << "V_" << mrVer << "\n";
+    }
+	}
+	void printPtrIdToDerivedMrIdsMap(){
+		std::cout << "Printing ptrIdToDerivedMrIdsMap.\n";
+		for(auto p : ptrIdToDerivedMrIdsMap){
+        auto nodeId = p.first;
+        for(auto mrId : p.second){
+            std::cout << "Node id " << nodeId << " => " << "MR id " << mrId << "\n";
+        }
+    }
+	}
+
+};
+
+PointsToGraph readPtgDirectly(const std::set<std::tuple<SVF::NodeID, SVF::NodeID, std::string>> &ptg, 
+  const std::map<SVF::NodeID, std::set<SVF::MRID>> &ptrIdToDerivedMrIdsMap, 
+  const std::map<SVF::NodeID, std::tuple<std::string, SVF::MRID, SVF::MRVERID>> &nodeId2mrIdAndVerMap){
+
+
+	PointsToGraph res;
+	std::map<u_int32_t, std::map<std::string, std::set<u_int32_t>>> data;
+	u_int32_t nodeNum = 0;
+	u_int32_t size = 0;
+
+	for(auto [from, to, type] : ptg){
+		nodeNum = std::max(nodeNum, from);
+		nodeNum = std::max(nodeNum, to);
+		data[from][type].insert(to);
+		++size;
+	}
+
+	res.graph = data;
+	res.nodeNum = nodeNum;
+	res.size = size;
+
+	res.ptrIdToDerivedMrIdsMap = ptrIdToDerivedMrIdsMap;
+	res.nodeId2mrIdAndVerMap = nodeId2mrIdAndVerMap;
+
+	return res;
+}
+
+
 
 
 int main(int argc, char **argv) {
@@ -1239,7 +1311,9 @@ int main(int argc, char **argv) {
     graphOut.close();
   }
 
-  gpamain(graphOutputFileName);
+
+  auto ptg = readPtgDirectly(mssa->getTuplePtg(), mssa->getNodeId2MrIdsMap(), mssa->getNodeId2mrIdAndVerMap());
+  gpamain(ptg, graphOutputFileName);
 
   std::cout << "11\n";
   

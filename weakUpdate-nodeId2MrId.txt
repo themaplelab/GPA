@@ -1,0 +1,16 @@
+44,main,6,1
+45,main,6,0
+46,main,4,1
+47,main,4,0
+48,main,8,1
+49,main,8,0
+50,main,2,1
+51,main,2,0
+52,main,2,2
+54,main,4,2
+56,main,6,2
+58,main,8,4
+60,main,8,2
+62,main,8,3
+63,main,4,3
+65,main,2,3

@@ -1118,9 +1118,9 @@ void verifyResult(std::map<std::string, std::map<u_int32_t, std::set<u_int32_t>>
 }
 
 
-int gpamain(const std::string ptgFileName){
+int gpamain(PointsToGraph &ptg, const std::string ptgFileName){
 
-	auto ptg = readPtg(ptgFileName);
+	// auto ptg = readPtg(ptgFileName);
 	std::cout << "Initial ptg contains " << ptg.size << " edges\n";
 	// auto edgeTypeToSbvGroupMap = preprocessPtgForGpu(ptg);	
 	auto edgeTypeToSbvGroupMap = preprocessPtgForGpuWithReverseEdges(ptg);	
@@ -1323,71 +1323,60 @@ int gpamain(const std::string ptgFileName){
 
 
 
-	// for(const std::string& label : edgeType) {
-  //   SBV_ADDR_TYPE *deviceLabelData = dataMap[label];
+	for(const std::string& label : edgeType) {
+    SBV_ADDR_TYPE *deviceLabelData = dataMap[label];
 
-  //   // Host array of device pointers
-  //   std::vector<SBV_ADDR_TYPE> hostSbvPtrArray(allocatedCount);
-  //   CUDA_CHECK(cudaMemcpy(hostSbvPtrArray.data(), deviceLabelData, allocatedCount * sizeof(SBV_ADDR_TYPE), cudaMemcpyDeviceToHost));
+    // Host array of device pointers
+    std::vector<SBV_ADDR_TYPE> hostSbvPtrArray(allocatedCount);
+    CUDA_CHECK(cudaMemcpy(hostSbvPtrArray.data(), deviceLabelData, allocatedCount * sizeof(SBV_ADDR_TYPE), cudaMemcpyDeviceToHost));
 
-  //   for(u_int32_t src = 0; src < allocatedCount; ++src){
-	// 		SBV_ADDR_TYPE deviceAddr = hostSbvPtrArray[src];
-	// 		if(deviceAddr == NULL_ADDR){
-	// 			continue;
-	// 		} 
+    for(u_int32_t src = 0; src < allocatedCount; ++src){
+			SBV_ADDR_TYPE deviceAddr = hostSbvPtrArray[src];
+			if(deviceAddr == NULL_ADDR){
+				continue;
+			} 
 
-			// Copy chain of SBVs to host
-			// std::vector<SBV> chain;
-			// SBV curr;
-			// CUDA_CHECK(cudaMemcpy(&curr, deviceSbv, sizeof(SBV), cudaMemcpyDeviceToHost));
-			// chain.push_back(curr);
-			// while (curr.next) {
-			// 		CUDA_CHECK(cudaMemcpy(&curr, curr.next, sizeof(SBV), cudaMemcpyDeviceToHost));
-			// 		chain.push_back(curr);
-			// }
+			SBV_ADDR_TYPE curr = deviceAddr;
+			while(curr != NULL_ADDR){
+				SBV &sbv = hostPool[curr];
+				for(int i = 0; i < WORDS_PER_BLOCK; ++i){
+					u_int32_t word = sbv.bits[i];
+					if(!word){
+						continue;
+					} 
+					for(int bit = 0; bit < 32; ++bit){
+						if(word & (1u << bit)){
+							u_int32_t baseId = sbv.base;
+							u_int32_t wordId = 28 - i;
+							u_int32_t inWordId = bit;
+							u_int32_t id = baseId * 928 + wordId * 32 + inWordId;
+							edgeResultMap[label][src].insert(id);
+						}
+					}
+				}
 
-			// Decode all IDs
-	// 		SBV_ADDR_TYPE curr = deviceAddr;
-	// 		while(curr != NULL_ADDR){
-	// 			SBV &sbv = hostPool[curr];
-	// 			for(int i = 0; i < WORDS_PER_BLOCK; ++i){
-	// 				u_int32_t word = sbv.bits[i];
-	// 				if(!word){
-	// 					continue;
-	// 				} 
-	// 				for(int bit = 0; bit < 32; ++bit){
-	// 					if(word & (1u << bit)){
-	// 						u_int32_t baseId = sbv.base;
-	// 						u_int32_t wordId = 28 - i;
-	// 						u_int32_t inWordId = bit;
-	// 						u_int32_t id = baseId * 928 + wordId * 32 + inWordId;
-	// 						edgeResultMap[label][src].insert(id);
-	// 					}
-	// 				}
-	// 			}
-
-	// 			curr = sbv.next;
-	// 		}
-  //   }
-	// }
+				curr = sbv.next;
+			}
+    }
+	}
 
 	// verifyResult(edgeResultMap, ptgFileName);
 
-	// for(const auto &[label, pts] : edgeResultMap){
-	// 	if(label != "p"){
-	// 		continue;
-	// 	}
-  //   for(const auto &[src, dsts] : pts){
-	// 		if(dsts.empty()){
-	// 			continue;
-	// 		}
-	// 		std::cout << src << " ==> {";
-	// 		for(auto dst : dsts){
-	// 			std::cout << dst << " ";
-	// 		}
-	// 		std::cout << "}\n";
-  //   }
-	// }
+	for(const auto &[label, pts] : edgeResultMap){
+		if(label != "p"){
+			continue;
+		}
+    for(const auto &[src, dsts] : pts){
+			if(dsts.empty()){
+				continue;
+			}
+			std::cout << src << " ==> {";
+			for(auto dst : dsts){
+				std::cout << dst << " ";
+			}
+			std::cout << "}\n";
+    }
+	}
 
 	// clean up
 
