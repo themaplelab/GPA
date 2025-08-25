@@ -1,9 +1,9 @@
-44,main,6,1
-45,main,6,0
-46,main,4,1
-47,main,4,0
-48,main,8,1
-49,main,8,0
+44,main,8,1
+45,main,8,0
+46,main,6,1
+47,main,6,0
+48,main,4,1
+49,main,4,0
 50,main,2,1
 51,main,2,0
 52,main,2,2

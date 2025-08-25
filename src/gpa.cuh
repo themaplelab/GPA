@@ -10,7 +10,7 @@ __global__ void hello();
 #endif
 
 #ifdef __cplusplus     // safe for both CUDA and C++
-extern "C" int gpamain(PointsToGraph &ptg, const std::string ptgFileName);
+extern "C" int gpamain(PointsToGraph &ptg, const std::string ptgFileName, bool verify = false);
 #endif
 
 

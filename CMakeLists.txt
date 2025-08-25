@@ -185,7 +185,7 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 find_package(CUDAToolkit REQUIRED)
 
-add_executable(gpa src/main.cpp src/gpa.cu src/sbv_gpu.cu)
+add_executable(gpa src/main.cpp src/gpa.cu src/sbv_gpu.cu src/PointsToGraph.cpp)
 
 set_target_properties(gpa PROPERTIES
   CUDA_RUNTIME_LIBRARY Shared
@@ -208,6 +208,10 @@ get_filename_component(_cuda_libdir "${_cudart_so}" DIRECTORY)
 target_link_directories(gpa PRIVATE "${_cuda_libdir}")
 # (nice to have) embed rpath for runtime
 target_link_options(gpa PRIVATE "-Wl,-rpath,${_cuda_libdir}")
+
+target_compile_options(gpa PRIVATE
+  $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=68>
+)
 
 # Provide cudadevrt explicitly (device runtime is always static)
 if(TARGET CUDA::cudadevrt)
