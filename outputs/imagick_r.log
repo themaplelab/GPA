@@ -1,0 +1,164 @@
+nohup: ignoring input
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : imagick_r.ll)###############
+AddrsNum            33887
+BBWith2Succ         22535
+BBWith3Succ         308
+CallsNum            76135
+ConstArrayObj       81
+ConstStructObj      2
+ConstantObj         0
+CopysNum            22408
+FIObjNum            3341
+FSObjNum            17464
+FunctionObjs        3063
+GepsNum             97470
+GlobalObjs          159
+HeapObjs            20
+IndCallSites        109
+LoadsNum            167156
+MaxStructSize       142
+NonPtrObj           12419
+ReturnsNum          28271
+StackObjs           17563
+StoresNum           71100
+TotalCallSite       36609
+TotalFieldObjects   5040
+TotalObjects        25846
+TotalPTASVFStmts    327388
+TotalPointers       551008
+TotalSVFStmts       602442
+VarArrayObj         421
+VarStructObj        852
+----------------Time and memory stats--------------------
+LLVMIRTime          0.816
+SVFIRTime           3.479
+SymbolTableTime     0.21
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : imagick_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   574
+MaxNodeInCycle      71
+NodeInCycle         174
+TotalCycle          44
+TotalEdge           36570
+TotalNode           3063
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : imagick_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.109591
+AvgIn/OutCopyEdge   1.00147
+AvgIn/OutEdge       1.60973
+AvgIn/OutLoadEdge   0.365933
+AvgIn/OutStoreEdge  0.132728
+AvgPtsSetSize       17.7127
+AvgTopLvlPtsSize    38.6265
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    968680
+MemoryUsageVmsize   967880
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           9.615
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       27627
+CopyProcessed       216629
+DummyFieldPtrs      633
+FieldObjs           5040
+GepProcessed        114837
+IndCallSites        109
+IndEdgeSolved       52
+LoadProcessed       2903075
+LocalVarInRecur     2598
+MaxInAddrEdge       1
+MaxInCopyEdge       3300
+MaxInLoadEdge       7242
+MaxInStoreEdge      673
+MaxNodesInSCC       6497
+MaxOutAddrEdge      6824
+MaxOutCopyEdge      13983
+MaxOutLoadEdge      1554
+MaxOutStoreEdge     4573
+MaxPtsSetSize       393
+MemObjects          25846
+NodesInCycles       15858
+NullPointer         15639
+NumOfAddrs          26032
+NumOfCGEdge         356339
+NumOfCGNode         240565
+NumOfCopys          143348
+NumOfFieldExpand    0
+NumOfGeps           94540
+NumOfLoads          86923
+NumOfSCCDetect      10
+NumOfSFRs           0
+NumOfStores         31528
+NumOfValidNode      237538
+NumOfValidObjNode   21435
+Pointers            551008
+PointsToBlkPtr      0
+PointsToConstPtr    22098
+SolveIterations     10
+StoreProcessed      1252504
+TotalCycleNum       700
+TotalObjects        25846
+TotalPWCCycleNum    35
+TotalPointers       551008
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : imagick_r.ll)###############
+UniquePointsToSets       29548
+TotalUnions              403576
+PropertyUnions           237808
+UniqueUnions             4951
+LookupUnions             151882
+PreemptiveUnions         8935
+TotalComplements         2461540
+PropertyComplements      2339688
+UniqueComplements        2110
+LookupComplements        117632
+PreemptiveComplements    2110
+TotalIntersections       349368
+PropertyIntersections    345144
+UniqueIntersections      3
+LookupIntersections      0
+PreemptiveIntersections  4221
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : imagick_r.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      10.0043
+GenMUCHITime        0.576
+GenRegionTime       17.102
+InsertPHITime       0.127
+SSARenameTime       0.109
+TotalMSSATime       17.92
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        9404
+CSChiNode           80616
+CSHasChi            15544
+CSHasMu             20489
+CSMuNode            175433
+FunEntryChi         19639
+FunHasEntryChi      2598
+FunHasRetMu         2964
+FunRetMu            19629
+LoadHasMu           91236
+LoadMuNode          95442
+MSSAPhi             45918
+MaxRegSize          791
+MemRegions          11176
+StoreChiNode        35433
+StoreHasChi         34452
+#######################################################

@@ -6,21 +6,12 @@
 #include <climits>
 #include <cassert>
 #include <vector>
+#include "Utils.cuh"
 
-
-#define CUDA_CHECK(call)                                                         \
-do {                                                                             \
-    cudaError_t err = call;                                                     \
-    if (err != cudaSuccess) {                                                   \
-        std::cerr << "CUDA error in file " << __FILE__ << " at line : " <<			\
-				__LINE__  << " " << cudaGetErrorString(err) << " \n";               		\
-        exit(EXIT_FAILURE);                                                     \
-    }                                                                            \
-} while (0)
 
 
 #define WORDS_PER_BLOCK 29
-#define MAX_ALLOCATED_SBV_NUM 70000000	// 128 bytes SBV leads to about 8GB.
+#define MAX_ALLOCATED_SBV_NUM 50000000	// 128 bytes SBV leads to about 8GB.
 #define NULL_ADDR -1
 
 

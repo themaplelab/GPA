@@ -15,6 +15,7 @@
 
 #include "sbv_gpu.cuh"
 #include "PointsToGraph.h"
+#include "Utils.cuh"
 // #include "test.cuh"
 
 
@@ -764,7 +765,7 @@ void solveReverse(std::map<std::string, SBV_ADDR_TYPE*> dataMap, u_int32_t nodeN
 						const u_int32_t* nodeIdToMrId, const u_int32_t* derivedIds, const u_int32_t* derivedOffsets, 
 						const u_int32_t* derivedCounts, bool debug = false, size_t threadsPerBlock = 16){
 
-	DEBUG_LOG("Starting solving with reverse edges\n");
+	DEBUG_LOG("Starting flow-sensitive pointer analysis on GPU.\n");
 
 	int hostChanged = 1;
 	int *deviceChanged;
@@ -820,7 +821,7 @@ void solveReverse(std::map<std::string, SBV_ADDR_TYPE*> dataMap, u_int32_t nodeN
     CUDA_CHECK(cudaMemcpy(&hostChanged, deviceChanged, sizeof(int), cudaMemcpyDeviceToHost));
 	}
 	
-	DEBUG_LOG("Round: " << round);
+	// DEBUG_LOG("Round: " << round);
 	
 
 }
@@ -1027,69 +1028,12 @@ void prepareMetaDataOnGPU(u_int32_t* &deviceNodeIdToMrId, u_int32_t* &deviceDeri
 
 }
 
+void postProcessGpuMemory(SBV* &deviceSbvPool, std::map<std::string, SBV_ADDR_TYPE*> &dataMap, const size_t allocatedCount,
+													std::map<std::string, std::map<u_int32_t, std::set<u_int32_t>>> &edgeResultMap){
 
-int gpamain(PointsToGraph &ptg, const std::string ptgFileName, bool verify){
-
-	auto edgeTypeToSbvGroupMap = preprocessPtgForGpuWithReverseEdges(ptg);	
-
-	auto start = std::chrono::high_resolution_clock::now();
-	// set up gpu memory pool.
-	SBV* deviceSbvPool;
-	u_int32_t* deviceSbvPoolIndex;
-	CUDA_CHECK(cudaMalloc(&deviceSbvPool, sizeof(SBV) * MAX_ALLOCATED_SBV_NUM));
-	
-	std::map<std::string, SBV_ADDR_TYPE*> dataMap;
-	// node 0 is reserved for nullptr. Valid node index starts from 1.
-	size_t allocatedCount = ptg.nodeNum+1;
-	
-	prepareMemoryOnGPU(dataMap, deviceSbvPool, allocatedCount, edgeTypeToSbvGroupMap, deviceSbvPoolIndex);
-	
-
-	std::vector<u_int32_t> hostNodeIdToMrId(allocatedCount, 0);
-	for (const auto &[nodeId, tup] : ptg.nodeId2mrIdAndVerMap){
-    hostNodeIdToMrId[nodeId] = std::get<1>(tup);
-	}
-
-	u_int32_t* deviceNodeIdToMrId;
-	u_int32_t *deviceDerivedIds, *deviceDerivedOffsets, *deviceDerivedCounts;
-	prepareMetaDataOnGPU(deviceNodeIdToMrId, deviceDerivedIds, deviceDerivedOffsets, deviceDerivedCounts, hostNodeIdToMrId,
-											allocatedCount, ptg);
-
-	// cudaDeviceSynchronize();
-
-	cudaEvent_t cudastart, cudastop;
-	cudaEventCreate(&cudastart);
-	cudaEventCreate(&cudastop);
-	cudaEventRecord(cudastart);
-
-	solveReverse(dataMap, ptg.nodeNum, deviceSbvPool, deviceSbvPoolIndex, deviceNodeIdToMrId, deviceDerivedIds, deviceDerivedOffsets,
-				deviceDerivedCounts, true);
-
-	cudaEventRecord(cudastop);
-	cudaEventSynchronize(cudastop);
-	float milliseconds = 0;
-	cudaEventElapsedTime(&milliseconds, cudastart, cudastop);
-	std::cout << "Solving time (GPU only): " << milliseconds << " ms\n";
-
-	cudaEventDestroy(cudastart);
-	cudaEventDestroy(cudastop);
-	cudaDeviceSynchronize();
-
-	auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout << "Total time: " << duration.count() << " ms\n";
-
-	u_int32_t totalSbvBlockNum;
-	CUDA_CHECK(cudaMemcpy(&totalSbvBlockNum, deviceSbvPoolIndex, sizeof(u_int32_t), cudaMemcpyDeviceToHost));
-
-	std::cout << "Total number of sbv block allocated is " << totalSbvBlockNum << "\n";
-
-	std::map<std::string, std::map<u_int32_t, std::set<u_int32_t>>> edgeResultMap;
 	std::vector<SBV> hostPool;
 	hostPool.resize(MAX_ALLOCATED_SBV_NUM);
 	CUDA_CHECK(cudaMemcpy(hostPool.data(), deviceSbvPool, MAX_ALLOCATED_SBV_NUM * sizeof(SBV), cudaMemcpyDeviceToHost));
-
-
 
 	for(const std::string& label : edgeType) {
     SBV_ADDR_TYPE *deviceLabelData = dataMap[label];
@@ -1128,6 +1072,71 @@ int gpamain(PointsToGraph &ptg, const std::string ptgFileName, bool verify){
     }
 	}
 
+
+
+}
+
+void cleanUp(SBV* &deviceSbvPool, u_int32_t* &deviceSbvPoolIndex, u_int32_t* &deviceNodeIdToMrId, u_int32_t* &deviceDerivedIds, 
+						u_int32_t* &deviceDerivedOffsets, u_int32_t* &deviceDerivedCounts,
+						std::map<std::string, std::vector<SBVCPU*>> &edgeTypeToSbvGroupMap){
+
+	CUDA_CHECK(cudaFree(deviceSbvPool));
+	CUDA_CHECK(cudaFree(deviceSbvPoolIndex));
+	CUDA_CHECK(cudaFree(deviceNodeIdToMrId));
+	CUDA_CHECK(cudaFree(deviceDerivedIds));
+	CUDA_CHECK(cudaFree(deviceDerivedOffsets));
+	CUDA_CHECK(cudaFree(deviceDerivedCounts));
+
+	for(auto et : edgeType){
+		for(auto sbv : edgeTypeToSbvGroupMap[et]){
+			delete sbv;
+		}
+	}
+
+}
+
+int gpamain(PointsToGraph &ptg, const std::string ptgFileName, bool verify, std::chrono::high_resolution_clock::time_point start){
+
+	auto edgeTypeToSbvGroupMap = preprocessPtgForGpuWithReverseEdges(ptg);	
+
+	// set up gpu memory pool.
+	SBV* deviceSbvPool;
+	u_int32_t* deviceSbvPoolIndex;
+	CUDA_CHECK(cudaMalloc(&deviceSbvPool, sizeof(SBV) * MAX_ALLOCATED_SBV_NUM));
+	
+	std::map<std::string, SBV_ADDR_TYPE*> dataMap;
+	// node 0 is reserved for nullptr. Valid node index starts from 1.
+	size_t allocatedCount = ptg.nodeNum+1;
+	
+	prepareMemoryOnGPU(dataMap, deviceSbvPool, allocatedCount, edgeTypeToSbvGroupMap, deviceSbvPoolIndex);
+	
+	std::vector<u_int32_t> hostNodeIdToMrId(allocatedCount, 0);
+	for (const auto &[nodeId, tup] : ptg.nodeId2mrIdAndVerMap){
+    hostNodeIdToMrId[nodeId] = std::get<1>(tup);
+	}
+
+	u_int32_t* deviceNodeIdToMrId;
+	u_int32_t *deviceDerivedIds, *deviceDerivedOffsets, *deviceDerivedCounts;
+	prepareMetaDataOnGPU(deviceNodeIdToMrId, deviceDerivedIds, deviceDerivedOffsets, deviceDerivedCounts, hostNodeIdToMrId,
+											allocatedCount, ptg);
+
+	// cudaDeviceSynchronize();
+
+	const float milliseconds = time_cuda_ms([&]{
+  	solveReverse(dataMap, ptg.nodeNum, deviceSbvPool, deviceSbvPoolIndex, deviceNodeIdToMrId, deviceDerivedIds, deviceDerivedOffsets,
+               deviceDerivedCounts, true,  512);
+	});
+	std::cout << "Solving time (GPU only): " << milliseconds << " ms\n";
+	cudaDeviceSynchronize();
+
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
+	std::cout << "Elapsed: " << ms << " ms\n";
+
+	std::map<std::string, std::map<u_int32_t, std::set<u_int32_t>>> edgeResultMap;
+
+	postProcessGpuMemory(deviceSbvPool, dataMap, allocatedCount, edgeResultMap);
+
 	if(verify){
 		verifyResult(edgeResultMap, ptgFileName);
 	}
@@ -1151,18 +1160,8 @@ int gpamain(PointsToGraph &ptg, const std::string ptgFileName, bool verify){
 
 	// clean up
 
-	CUDA_CHECK(cudaFree(deviceSbvPool));
-	CUDA_CHECK(cudaFree(deviceSbvPoolIndex));
-	CUDA_CHECK(cudaFree(deviceNodeIdToMrId));
-	CUDA_CHECK(cudaFree(deviceDerivedIds));
-	CUDA_CHECK(cudaFree(deviceDerivedOffsets));
-	CUDA_CHECK(cudaFree(deviceDerivedCounts));
-
-	for(auto et : edgeType){
-		for(auto sbv : edgeTypeToSbvGroupMap[et]){
-			delete sbv;
-		}
-	}
+	cleanUp(deviceSbvPool, deviceSbvPoolIndex, deviceNodeIdToMrId, deviceDerivedIds, deviceDerivedOffsets, deviceDerivedCounts,
+					edgeTypeToSbvGroupMap);
 
 
 	return 0;

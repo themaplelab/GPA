@@ -1,0 +1,180 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+vcall gep idx not constantint
+
+*********General Stats***************
+################ (program : x264_r.ll)###############
+AddrsNum            9793
+BBWith2Succ         5715
+BBWith3Succ         21
+CallsNum            9911
+ConstArrayObj       31
+ConstStructObj      7
+ConstantObj         0
+CopysNum            14518
+FIObjNum            1052
+FSObjNum            6709
+FunctionObjs        908
+GepsNum             49899
+GlobalObjs          71
+HeapObjs            38
+IndCallSites        495
+LoadsNum            58703
+MaxStructSize       606
+NonPtrObj           5749
+ReturnsNum          1408
+StackObjs           6744
+StoresNum           23274
+TotalCallSite       5074
+TotalFieldObjects   547
+TotalObjects        8309
+TotalPTASVFStmts    104875
+TotalPointers       197726
+TotalSVFStmts       202150
+VarArrayObj         176
+VarStructObj        76
+----------------Time and memory stats--------------------
+LLVMIRTime          0.221
+SVFIRTime           0.887
+SymbolTableTime     0.063
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : x264_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   2
+MaxNodeInCycle      2
+NodeInCycle         2
+TotalCycle          1
+TotalEdge           14355
+TotalNode           908
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : x264_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.0920452
+AvgIn/OutCopyEdge   1.09836
+AvgIn/OutEdge       1.60477
+AvgIn/OutLoadEdge   0.3172
+AvgIn/OutStoreEdge  0.0971636
+AvgPtsSetSize       63.149
+AvgTopLvlPtsSize    132.709
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.39753e+06
+MemoryUsageVmsize   1.39732e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           10.976
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       8918
+CopyProcessed       130770
+DummyFieldPtrs      267
+FieldObjs           547
+GepProcessed        139953
+IndCallSites        495
+IndEdgeSolved       9774
+LoadProcessed       4230254
+LocalVarInRecur     45
+MaxInAddrEdge       1
+MaxInCopyEdge       315
+MaxInLoadEdge       5716
+MaxInStoreEdge      141
+MaxNodesInSCC       162
+MaxOutAddrEdge      1158
+MaxOutCopyEdge      4697
+MaxOutLoadEdge      403
+MaxOutStoreEdge     5725
+MaxPtsSetSize       221
+MemObjects          8309
+NodesInCycles       956
+NullPointer         445
+NumOfAddrs          8632
+NumOfCGEdge         141863
+NumOfCGNode         94436
+NumOfCopys          53498
+NumOfFieldExpand    0
+NumOfGeps           49506
+NumOfLoads          29747
+NumOfSCCDetect      7
+NumOfSFRs           0
+NumOfStores         9112
+NumOfValidNode      93780
+NumOfValidObjNode   7658
+Pointers            197726
+PointsToBlkPtr      0
+PointsToConstPtr    25109
+SolveIterations     7
+StoreProcessed      3158346
+TotalCycleNum       175
+TotalObjects        8309
+TotalPWCCycleNum    115
+TotalPointers       197726
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : x264_r.ll)###############
+UniquePointsToSets       10849
+TotalUnions              311049
+PropertyUnions           115308
+UniqueUnions             1730
+LookupUnions             191154
+PreemptiveUnions         2857
+TotalComplements         704450
+PropertyComplements      546436
+UniqueComplements        1555
+LookupComplements        154904
+PreemptiveComplements    1555
+TotalIntersections       2230957
+PropertyIntersections    2227764
+UniqueIntersections      9
+LookupIntersections      72
+PreemptiveIntersections  3112
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : x264_r.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      1.82965
+GenMUCHITime        0.083
+GenRegionTime       0.478
+InsertPHITime       0.017
+SSARenameTime       0.013
+TotalMSSATime       0.593
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        1621
+CSChiNode           1825
+CSHasChi            1466
+CSHasMu             2135
+CSMuNode            4125
+FunEntryChi         3404
+FunHasEntryChi      784
+FunHasRetMu         851
+FunRetMu            3404
+LoadHasMu           29990
+LoadMuNode          36277
+MSSAPhi             3406
+MaxRegSize          206
+MemRegions          2401
+StoreChiNode        15672
+StoreHasChi         8900
+#######################################################
+Souffle overhead: 1234 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 49.6257 ms
+Elapsed: 17669 ms

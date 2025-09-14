@@ -1,0 +1,240 @@
+nohup: ignoring input
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : cpuxalan_r.ll)###############
+AddrsNum            172898
+BBWith2Succ         64016
+BBWith3Succ         213
+CallsNum            199750
+ConstArrayObj       37
+ConstStructObj      1953
+ConstantObj         0
+CopysNum            125000
+FIObjNum            40435
+FSObjNum            125185
+FunctionObjs        38648
+GepsNum             103031
+GlobalObjs          2659
+HeapObjs            1908
+IndCallSites        10759
+LoadsNum            236135
+MaxStructSize       2448
+NonPtrObj           76592
+ReturnsNum          80181
+StackObjs           122405
+StoresNum           171679
+TotalCallSite       131481
+TotalFieldObjects   35210
+TotalObjects        200831
+TotalPTASVFStmts    894534
+TotalPointers       1248818
+TotalSVFStmts       1236815
+VarArrayObj         323
+VarStructObj        12884
+----------------Time and memory stats--------------------
+LLVMIRTime          2.772
+SVFIRTime           12.104
+SymbolTableTime     1.399
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : cpuxalan_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   485765
+MaxNodeInCycle      13840
+NodeInCycle         13965
+TotalCycle          42
+TotalEdge           915763
+TotalNode           38648
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : cpuxalan_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.19404
+AvgIn/OutCopyEdge   1.35493
+AvgIn/OutEdge       1.92641
+AvgIn/OutLoadEdge   0.227089
+AvgIn/OutStoreEdge  0.150353
+AvgPtsSetSize       406.22
+AvgTopLvlPtsSize    708.412
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    2.2853e+07
+MemoryUsageVmsize   2.28541e+07
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           446.221
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       168863
+CopyProcessed       2264964
+DummyFieldPtrs      2221
+FieldObjs           35210
+GepProcessed        337273
+IndCallSites        10759
+IndEdgeSolved       795041
+LoadProcessed       235443019
+LocalVarInRecur     11600
+MaxInAddrEdge       1
+MaxInCopyEdge       9143
+MaxInLoadEdge       24424
+MaxInStoreEdge      187
+MaxNodesInSCC       79709
+MaxOutAddrEdge      3244
+MaxOutCopyEdge      65852
+MaxOutLoadEdge      406
+MaxOutStoreEdge     19195
+MaxPtsSetSize       3435
+MemObjects          200831
+NodesInCycles       106287
+NullPointer         7386
+NumOfAddrs          147553
+NumOfCGEdge         1317337
+NumOfCGNode         772101
+NumOfCopys          930965
+NumOfFieldExpand    0
+NumOfGeps           99356
+NumOfLoads          172684
+NumOfSCCDetect      19
+NumOfSFRs           0
+NumOfStores         114332
+NumOfValidNode      760424
+NumOfValidObjNode   157801
+Pointers            1248818
+PointsToBlkPtr      0
+PointsToConstPtr    57221
+SolveIterations     20
+StoreProcessed      35806397
+TotalCycleNum       1922
+TotalObjects        200831
+TotalPWCCycleNum    78
+TotalPointers       1248818
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : cpuxalan_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   520348
+MaxNodeInCycle      14092
+NodeInCycle         14216
+TotalCycle          41
+TotalEdge           991406
+TotalNode           38648
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : cpuxalan_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.194082
+AvgIn/OutCopyEdge   0.995895
+AvgIn/OutEdge       1.56913
+AvgIn/OutLoadEdge   0.227924
+AvgIn/OutStoreEdge  0.151228
+AvgPtsSetSize       421.32
+AvgTopLvlPtsSize    743.786
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    2.43712e+07
+MemoryUsageVmsize   2.43723e+07
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           684.448
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       168863
+CopyProcessed       4071943
+DummyFieldPtrs      2221
+FieldObjs           29016
+GepProcessed        586877
+IndCallSites        10759
+IndEdgeSolved       870684
+LoadProcessed       474069208
+LocalVarInRecur     11775
+MaxInAddrEdge       1
+MaxInCopyEdge       8567
+MaxInLoadEdge       25903
+MaxInStoreEdge      187
+MaxNodesInSCC       79709
+MaxOutAddrEdge      3244
+MaxOutCopyEdge      68249
+MaxOutLoadEdge      406
+MaxOutStoreEdge     20335
+MaxPtsSetSize       3468
+MemObjects          200831
+NodesInCycles       26561
+NullPointer         5915
+NumOfAddrs          146597
+NumOfCGEdge         1038621
+NumOfCGNode         766901
+NumOfCopys          652942
+NumOfFieldExpand    0
+NumOfGeps           99292
+NumOfLoads          172159
+NumOfSCCDetect      31
+NumOfSFRs           0
+NumOfStores         114228
+NumOfValidNode      755335
+NumOfValidObjNode   156739
+Pointers            1248818
+PointsToBlkPtr      0
+PointsToConstPtr    116011
+SolveIterations     31
+StoreProcessed      70970671
+TotalCycleNum       1921
+TotalObjects        200831
+TotalPWCCycleNum    77
+TotalPointers       1248818
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : cpuxalan_r.ll)###############
+UniquePointsToSets       310441
+TotalUnions              5572937
+PropertyUnions           1293769
+UniqueUnions             122160
+LookupUnions             3933552
+PreemptiveUnions         223456
+TotalComplements         25168494
+PropertyComplements      22330247
+UniqueComplements        76049
+LookupComplements        2686156
+PreemptiveComplements    76042
+TotalIntersections       18104976
+PropertyIntersections    17932919
+UniqueIntersections      801
+LookupIntersections      18588
+PreemptiveIntersections  152668
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : cpuxalan_r.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      48.2404
+GenMUCHITime        9.889
+GenRegionTime       8981.77
+InsertPHITime       4.041
+SSARenameTime       0.232
+TotalMSSATime       8996
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        26847
+CSChiNode           260617
+CSHasChi            69562
+CSHasMu             87460
+CSMuNode            403929
+FunEntryChi         208741
+FunHasEntryChi      38347
+FunHasRetMu         37794
+FunRetMu            206003
+LoadHasMu           179338
+LoadMuNode          238162
+MSSAPhi             184195
+MaxRegSize          3105
+MemRegions          118554
+StoreChiNode        117859
+StoreHasChi         113023
+#######################################################

@@ -1,0 +1,168 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : i3.ll)###############
+AddrsNum            10424
+BBWith2Succ         5055
+BBWith3Succ         31
+CallsNum            10077
+ConstArrayObj       167
+ConstStructObj      21
+ConstantObj         0
+CopysNum            3503
+FIObjNum            1175
+FSObjNum            4779
+FunctionObjs        1132
+GepsNum             20947
+GlobalObjs          404
+HeapObjs            38
+IndCallSites        8
+LoadsNum            29755
+MaxStructSize       242
+NonPtrObj           3343
+ReturnsNum          2082
+StackObjs           4380
+StoresNum           13784
+TotalCallSite       8415
+TotalFieldObjects   2080
+TotalObjects        8035
+TotalPTASVFStmts    71951
+TotalPointers       113310
+TotalSVFStmts       111762
+VarArrayObj         71
+VarStructObj        741
+----------------Time and memory stats--------------------
+LLVMIRTime          0.144
+SVFIRTime           0.505
+SymbolTableTime     0.069
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : i3.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   72
+MaxNodeInCycle      6
+NodeInCycle         45
+TotalCycle          33
+TotalEdge           8447
+TotalNode           1132
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : i3.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.138827
+AvgIn/OutCopyEdge   0.952068
+AvgIn/OutEdge       1.61597
+AvgIn/OutLoadEdge   0.384708
+AvgIn/OutStoreEdge  0.140365
+AvgPtsSetSize       8.50012
+AvgTopLvlPtsSize    16.4196
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    182156
+MemoryUsageVmsize   181536
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           1.293
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       8726
+CopyProcessed       76277
+DummyFieldPtrs      471
+FieldObjs           2080
+GepProcessed        37945
+IndCallSites        8
+IndEdgeSolved       28
+LoadProcessed       271106
+LocalVarInRecur     375
+MaxInAddrEdge       1
+MaxInCopyEdge       831
+MaxInLoadEdge       3218
+MaxInStoreEdge      97
+MaxNodesInSCC       62
+MaxOutAddrEdge      2773
+MaxOutCopyEdge      5608
+MaxOutLoadEdge      483
+MaxOutStoreEdge     3131
+MaxPtsSetSize       178
+MemObjects          8035
+NodesInCycles       292
+NullPointer         728
+NumOfAddrs          8214
+NumOfCGEdge         87398
+NumOfCGNode         60855
+NumOfCopys          35732
+NumOfFieldExpand    0
+NumOfGeps           20599
+NumOfLoads          22762
+NumOfSCCDetect      10
+NumOfSFRs           0
+NumOfStores         8305
+NumOfValidNode      59167
+NumOfValidObjNode   6578
+Pointers            113310
+PointsToBlkPtr      0
+PointsToConstPtr    6895
+SolveIterations     10
+StoreProcessed      106449
+TotalCycleNum       38
+TotalObjects        8035
+TotalPWCCycleNum    12
+TotalPointers       113310
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : i3.ll)###############
+UniquePointsToSets       9136
+TotalUnions              134310
+PropertyUnions           97538
+UniqueUnions             1031
+LookupUnions             33911
+PreemptiveUnions         1830
+TotalComplements         625398
+PropertyComplements      590940
+UniqueComplements        554
+LookupComplements        33350
+PreemptiveComplements    554
+TotalIntersections       101310
+PropertyIntersections    100168
+UniqueIntersections      13
+LookupIntersections      8
+PreemptiveIntersections  1121
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : i3.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      4.13303
+GenMUCHITime        0.056
+GenRegionTime       0.371
+InsertPHITime       0.016
+SSARenameTime       0.016
+TotalMSSATime       0.46
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        2155
+CSChiNode           12873
+CSHasChi            3134
+CSHasMu             4061
+CSMuNode            22852
+FunEntryChi         8075
+FunHasEntryChi      715
+FunHasRetMu         738
+FunRetMu            8041
+LoadHasMu           23420
+LoadMuNode          30863
+MSSAPhi             12078
+MaxRegSize          347
+MemRegions          3909
+StoreChiNode        10548
+StoreHasChi         7581
+#######################################################
+Souffle overhead: 2299 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 244.717 ms
+Elapsed: 8519 ms

@@ -1,0 +1,170 @@
+nohup: ignoring input
+sh: 1: npm: not found
+sh: 1: npm: not found
+vcall gep idx not constantint
+
+*********General Stats***************
+################ (program : perlbench_r.bc)###############
+AddrsNum            33037
+BBWith2Succ         51734
+BBWith3Succ         418
+CallsNum            56129
+ConstArrayObj       46
+ConstStructObj      18
+ConstantObj         0
+CopysNum            74507
+FIObjNum            3602
+FSObjNum            21816
+FunctionObjs        3152
+GepsNum             104565
+GlobalObjs          399
+HeapObjs            96
+IndCallSites        241
+LoadsNum            221624
+MaxStructSize       62
+NonPtrObj           12830
+ReturnsNum          16797
+StackObjs           21771
+StoresNum           62986
+TotalCallSite       27549
+TotalFieldObjects   817
+TotalObjects        26236
+TotalPTASVFStmts    398848
+TotalPointers       782375
+TotalSVFStmts       784223
+VarArrayObj         187
+VarStructObj        214
+----------------Time and memory stats--------------------
+LLVMIRTime          0.674
+SVFIRTime           5.1
+SymbolTableTime     4.201
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : perlbench_r.bc)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   34931
+MaxNodeInCycle      2162
+NodeInCycle         2173
+TotalCycle          12
+TotalEdge           43378
+TotalNode           3152
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : perlbench_r.bc)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.0791424
+AvgIn/OutCopyEdge   0.929461
+AvgIn/OutEdge       1.5283
+AvgIn/OutLoadEdge   0.437307
+AvgIn/OutStoreEdge  0.082391
+AvgPtsSetSize       362.53
+AvgTopLvlPtsSize    841.44
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.12068e+07
+MemoryUsageVmsize   1.12062e+07
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           306.523
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       30911
+CopyProcessed       1150611
+DummyFieldPtrs      651
+FieldObjs           817
+GepProcessed        522873
+IndCallSites        241
+IndEdgeSolved       16004
+LoadProcessed       243632563
+LocalVarInRecur     6601
+MaxInAddrEdge       1
+MaxInCopyEdge       2267
+MaxInLoadEdge       14103
+MaxInStoreEdge      397
+MaxNodesInSCC       705
+MaxOutAddrEdge      5495
+MaxOutCopyEdge      72892
+MaxOutLoadEdge      3489
+MaxOutStoreEdge     10186
+MaxPtsSetSize       1400
+MemObjects          26236
+NodesInCycles       5751
+NullPointer         587
+NumOfAddrs          23753
+NumOfCGEdge         434936
+NumOfCGNode         300944
+NumOfCopys          181549
+NumOfFieldExpand    0
+NumOfGeps           97410
+NumOfLoads          131249
+NumOfSCCDetect      12
+NumOfSFRs           0
+NumOfStores         24728
+NumOfValidNode      300130
+NumOfValidObjNode   18608
+Pointers            782375
+PointsToBlkPtr      0
+PointsToConstPtr    70414
+SolveIterations     12
+StoreProcessed      90428563
+TotalCycleNum       693
+TotalObjects        26236
+TotalPWCCycleNum    102
+TotalPointers       782375
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : perlbench_r.bc)###############
+UniquePointsToSets       32561
+TotalUnions              1797997
+PropertyUnions           518249
+UniqueUnions             5738
+LookupUnions             1263699
+PreemptiveUnions         10311
+TotalComplements         3778629
+PropertyComplements      2566612
+UniqueComplements        2910
+LookupComplements        1206197
+PreemptiveComplements    2910
+TotalIntersections       12721009
+PropertyIntersections    12714969
+UniqueIntersections      32
+LookupIntersections      158
+PreemptiveIntersections  5850
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : perlbench_r.bc)###############
+----------------Time and memory stats--------------------
+AverageRegSize      14.7139
+GenMUCHITime        2.806
+GenRegionTime       177.305
+InsertPHITime       0.841
+SSARenameTime       0.168
+TotalMSSATime       181.124
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        20991
+CSChiNode           181396
+CSHasChi            22373
+CSHasMu             23842
+CSMuNode            257571
+FunEntryChi         29518
+FunHasEntryChi      2947
+FunHasRetMu         3037
+FunRetMu            29472
+LoadHasMu           145509
+LoadMuNode          246046
+MSSAPhi             171928
+MaxRegSize          1126
+MemRegions          14390
+StoreChiNode        47453
+StoreHasChi         32405
+#######################################################
+Souffle overhead: 198267 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 638.439 ms
+Elapsed: 706866 ms

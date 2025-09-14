@@ -1,0 +1,320 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : lynx.dbg.ll)###############
+AddrsNum            41095
+BBWith2Succ         24639
+BBWith3Succ         204
+CallsNum            25860
+ConstArrayObj       295
+ConstStructObj      139
+ConstantObj         0
+CopysNum            16987
+FIObjNum            2702
+FSObjNum            10345
+FunctionObjs        2083
+GepsNum             31258
+GlobalObjs          1435
+HeapObjs            361
+IndCallSites        841
+LoadsNum            80707
+MaxStructSize       152
+NonPtrObj           7555
+ReturnsNum          9350
+StackObjs           9168
+StoresNum           53185
+TotalCallSite       22375
+TotalFieldObjects   4286
+TotalObjects        17334
+TotalPTASVFStmts    163436
+TotalPointers       331328
+TotalSVFStmts       348208
+VarArrayObj         332
+VarStructObj        508
+----------------Time and memory stats--------------------
+LLVMIRTime          0.498
+SVFIRTime           1.909
+SymbolTableTime     0.186
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : lynx.dbg.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   5751
+MaxNodeInCycle      92
+NodeInCycle         160
+TotalCycle          19
+TotalEdge           32994
+TotalNode           2083
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : lynx.dbg.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.206183
+AvgIn/OutCopyEdge   1.0695
+AvgIn/OutEdge       1.8415
+AvgIn/OutLoadEdge   0.386151
+AvgIn/OutStoreEdge  0.179669
+AvgPtsSetSize       94.7045
+AvgTopLvlPtsSize    246.704
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.65464e+06
+MemoryUsageVmsize   1.65445e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           33.347
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       27872
+CopyProcessed       605568
+DummyFieldPtrs      753
+FieldObjs           4286
+GepProcessed        208510
+IndCallSites        841
+IndEdgeSolved       11452
+LoadProcessed       39349085
+LocalVarInRecur     775
+MaxInAddrEdge       1
+MaxInCopyEdge       2103
+MaxInLoadEdge       1957
+MaxInStoreEdge      2103
+MaxNodesInSCC       6797
+MaxOutAddrEdge      14826
+MaxOutCopyEdge      19910
+MaxOutLoadEdge      1334
+MaxOutStoreEdge     2453
+MaxPtsSetSize       1032
+MemObjects          17334
+NodesInCycles       9151
+NullPointer         395
+NumOfAddrs          26199
+NumOfCGEdge         207795
+NumOfCGNode         128712
+NumOfCopys          105971
+NumOfFieldExpand    0
+NumOfGeps           29927
+NumOfLoads          49067
+NumOfSCCDetect      19
+NumOfSFRs           0
+NumOfStores         22830
+NumOfValidNode      127067
+NumOfValidObjNode   12508
+Pointers            331328
+PointsToBlkPtr      0
+PointsToConstPtr    16011
+SolveIterations     20
+StoreProcessed      4181002
+TotalCycleNum       402
+TotalObjects        17334
+TotalPWCCycleNum    23
+TotalPointers       331328
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : lynx.dbg.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   5751
+MaxNodeInCycle      92
+NodeInCycle         160
+TotalCycle          19
+TotalEdge           32994
+TotalNode           2083
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : lynx.dbg.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.206285
+AvgIn/OutCopyEdge   1.07007
+AvgIn/OutEdge       1.84289
+AvgIn/OutLoadEdge   0.386637
+AvgIn/OutStoreEdge  0.179896
+AvgPtsSetSize       99.0057
+AvgTopLvlPtsSize    255.924
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.76489e+06
+MemoryUsageVmsize   1.76432e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           71.364
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       27872
+CopyProcessed       1449308
+DummyFieldPtrs      753
+FieldObjs           4286
+GepProcessed        518990
+IndCallSites        841
+IndEdgeSolved       11452
+LoadProcessed       112559775
+LocalVarInRecur     775
+MaxInAddrEdge       1
+MaxInCopyEdge       2103
+MaxInLoadEdge       1957
+MaxInStoreEdge      2103
+MaxNodesInSCC       6817
+MaxOutAddrEdge      14826
+MaxOutCopyEdge      19910
+MaxOutLoadEdge      1334
+MaxOutStoreEdge     2453
+MaxPtsSetSize       1052
+MemObjects          17334
+NodesInCycles       9171
+NullPointer         395
+NumOfAddrs          26179
+NumOfCGEdge         207697
+NumOfCGNode         128232
+NumOfCopys          105873
+NumOfFieldExpand    0
+NumOfGeps           29927
+NumOfLoads          49067
+NumOfSCCDetect      39
+NumOfSFRs           0
+NumOfStores         22830
+NumOfValidNode      126907
+NumOfValidObjNode   12348
+Pointers            331328
+PointsToBlkPtr      0
+PointsToConstPtr    32022
+SolveIterations     40
+StoreProcessed      12066412
+TotalCycleNum       402
+TotalObjects        17334
+TotalPWCCycleNum    23
+TotalPointers       331328
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : lynx.dbg.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   5751
+MaxNodeInCycle      92
+NodeInCycle         160
+TotalCycle          19
+TotalEdge           32994
+TotalNode           2083
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : lynx.dbg.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.20635
+AvgIn/OutCopyEdge   1.02346
+AvgIn/OutEdge       1.79685
+AvgIn/OutLoadEdge   0.386982
+AvgIn/OutStoreEdge  0.180056
+AvgPtsSetSize       98.3935
+AvgTopLvlPtsSize    262.378
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.84198e+06
+MemoryUsageVmsize   1.84137e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           99.476
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       27872
+CopyProcessed       2060602
+DummyFieldPtrs      753
+FieldObjs           1462
+GepProcessed        736357
+IndCallSites        841
+IndEdgeSolved       11452
+LoadProcessed       165409236
+LocalVarInRecur     775
+MaxInAddrEdge       1
+MaxInCopyEdge       2103
+MaxInLoadEdge       1957
+MaxInStoreEdge      2103
+MaxNodesInSCC       6817
+MaxOutAddrEdge      14826
+MaxOutCopyEdge      19909
+MaxOutLoadEdge      1334
+MaxOutStoreEdge     2453
+MaxPtsSetSize       1066
+MemObjects          17334
+NodesInCycles       2354
+NullPointer         395
+NumOfAddrs          26164
+NumOfCGEdge         201666
+NumOfCGNode         127895
+NumOfCopys          99842
+NumOfFieldExpand    0
+NumOfGeps           29927
+NumOfLoads          49067
+NumOfSCCDetect      54
+NumOfSFRs           0
+NumOfStores         22830
+NumOfValidNode      126794
+NumOfValidObjNode   12235
+Pointers            331328
+PointsToBlkPtr      0
+PointsToConstPtr    48033
+SolveIterations     54
+StoreProcessed      17758273
+TotalCycleNum       401
+TotalObjects        17334
+TotalPWCCycleNum    22
+TotalPointers       331328
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : lynx.dbg.ll)###############
+UniquePointsToSets       31346
+TotalUnions              2893217
+PropertyUnions           194633
+UniqueUnions             16993
+LookupUnions             2651873
+PreemptiveUnions         29718
+TotalComplements         7012177
+PropertyComplements      4602804
+UniqueComplements        11802
+LookupComplements        2385775
+PreemptiveComplements    11796
+TotalIntersections       2205139
+PropertyIntersections    2008418
+UniqueIntersections      131
+LookupIntersections      172869
+PreemptiveIntersections  23721
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : lynx.dbg.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      35.2849
+GenMUCHITime        0.836
+GenRegionTime       38.061
+InsertPHITime       0.311
+SSARenameTime       0.068
+TotalMSSATime       39.277
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        9454
+CSChiNode           104460
+CSHasChi            9593
+CSHasMu             13036
+CSMuNode            162072
+FunEntryChi         18069
+FunHasEntryChi      1847
+FunHasRetMu         1923
+FunRetMu            18055
+LoadHasMu           51091
+LoadMuNode          65676
+MSSAPhi             76489
+MaxRegSize          797
+MemRegions          8356
+StoreChiNode        13306
+StoreHasChi         11929
+#######################################################
+Souffle overhead: 119760 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 250.566 ms
+Elapsed: 267072 ms

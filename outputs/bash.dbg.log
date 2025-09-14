@@ -1,0 +1,168 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : bash.dbg.ll)###############
+AddrsNum            21053
+BBWith2Succ         20941
+BBWith3Succ         170
+CallsNum            21101
+ConstArrayObj       110
+ConstStructObj      39
+ConstantObj         0
+CopysNum            15645
+FIObjNum            3082
+FSObjNum            12608
+FunctionObjs        2860
+GepsNum             20855
+GlobalObjs          1239
+HeapObjs            76
+IndCallSites        131
+LoadsNum            71731
+MaxStructSize       27
+NonPtrObj           10261
+ReturnsNum          7798
+StackObjs           11515
+StoresNum           34323
+TotalCallSite       16794
+TotalFieldObjects   1491
+TotalObjects        17182
+TotalPTASVFStmts    111846
+TotalPointers       280398
+TotalSVFStmts       273995
+VarArrayObj         190
+VarStructObj        508
+----------------Time and memory stats--------------------
+LLVMIRTime          0.375
+SVFIRTime           1.588
+SymbolTableTime     0.136
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : bash.dbg.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   7787
+MaxNodeInCycle      1579
+NodeInCycle         1603
+TotalCycle          15
+TotalEdge           18325
+TotalNode           2860
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : bash.dbg.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.178414
+AvgIn/OutCopyEdge   0.757393
+AvgIn/OutEdge       1.46291
+AvgIn/OutLoadEdge   0.389171
+AvgIn/OutStoreEdge  0.137931
+AvgPtsSetSize       96.7031
+AvgTopLvlPtsSize    304.422
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.48633e+06
+MemoryUsageVmsize   1.48572e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           14.525
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       18315
+CopyProcessed       151858
+DummyFieldPtrs      1165
+FieldObjs           1491
+GepProcessed        43334
+IndCallSites        131
+IndEdgeSolved       1624
+LoadProcessed       4789770
+LocalVarInRecur     3527
+MaxInAddrEdge       1
+MaxInCopyEdge       1188
+MaxInLoadEdge       4338
+MaxInStoreEdge      138
+MaxNodesInSCC       263
+MaxOutAddrEdge      2626
+MaxOutCopyEdge      15244
+MaxOutLoadEdge      364
+MaxOutStoreEdge     4035
+MaxPtsSetSize       502
+MemObjects          17182
+NodesInCycles       3159
+NullPointer         321
+NumOfAddrs          15253
+NumOfCGEdge         109814
+NumOfCGNode         86407
+NumOfCopys          44838
+NumOfFieldExpand    0
+NumOfGeps           19913
+NumOfLoads          33271
+NumOfSCCDetect      9
+NumOfSFRs           0
+NumOfStores         11792
+NumOfValidNode      85492
+NumOfValidObjNode   13089
+Pointers            280398
+PointsToBlkPtr      0
+PointsToConstPtr    14943
+SolveIterations     9
+StoreProcessed      1657179
+TotalCycleNum       371
+TotalObjects        17182
+TotalPWCCycleNum    28
+TotalPointers       280398
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : bash.dbg.ll)###############
+UniquePointsToSets       19306
+TotalUnions              238146
+PropertyUnions           157375
+UniqueUnions             2242
+LookupUnions             74367
+PreemptiveUnions         4162
+TotalComplements         808976
+PropertyComplements      739802
+UniqueComplements        683
+LookupComplements        67809
+PreemptiveComplements    682
+TotalIntersections       1864721
+PropertyIntersections    1862868
+UniqueIntersections      7
+LookupIntersections      478
+PreemptiveIntersections  1368
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : bash.dbg.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      41.0218
+GenMUCHITime        0.489
+GenRegionTime       16.817
+InsertPHITime       0.163
+SSARenameTime       0.053
+TotalMSSATime       17.526
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        7263
+CSChiNode           66839
+CSHasChi            9457
+CSHasMu             10413
+CSMuNode            92934
+FunEntryChi         20151
+FunHasEntryChi      2497
+FunHasRetMu         2647
+FunRetMu            20031
+LoadHasMu           36540
+LoadMuNode          42699
+MSSAPhi             52466
+MaxRegSize          573
+MemRegions          7378
+StoreChiNode        14526
+StoreHasChi         12453
+#######################################################
+Souffle overhead: 149242 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 223.932 ms
+Elapsed: 188729 ms

@@ -1,0 +1,240 @@
+nohup: ignoring input
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : omnetpp_r.ll)###############
+AddrsNum            71651
+BBWith2Succ         23991
+BBWith3Succ         408
+CallsNum            61286
+ConstArrayObj       38
+ConstStructObj      628
+ConstantObj         0
+CopysNum            58695
+FIObjNum            19694
+FSObjNum            44970
+FunctionObjs        16161
+GepsNum             49180
+GlobalObjs          1302
+HeapObjs            1893
+IndCallSites        6837
+LoadsNum            99833
+MaxStructSize       245
+NonPtrObj           33045
+ReturnsNum          28571
+StackObjs           45308
+StoresNum           68572
+TotalCallSite       57002
+TotalFieldObjects   36730
+TotalObjects        101395
+TotalPTASVFStmts    368258
+TotalPointers       528682
+TotalSVFStmts       503888
+VarArrayObj         276
+VarStructObj        6145
+----------------Time and memory stats--------------------
+LLVMIRTime          1.03
+SVFIRTime           3.975
+SymbolTableTime     0.394
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : omnetpp_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   163079
+MaxNodeInCycle      3062
+NodeInCycle         3325
+TotalCycle          54
+TotalEdge           264655
+TotalNode           16161
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : omnetpp_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.183548
+AvgIn/OutCopyEdge   0.876196
+AvgIn/OutEdge       1.44034
+AvgIn/OutLoadEdge   0.228999
+AvgIn/OutStoreEdge  0.151596
+AvgPtsSetSize       841.635
+AvgTopLvlPtsSize    1271.51
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    2.35838e+07
+MemoryUsageVmsize   2.35853e+07
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           463.669
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       70235
+CopyProcessed       1083179
+DummyFieldPtrs      2124
+FieldObjs           36730
+GepProcessed        181620
+IndCallSites        6837
+IndEdgeSolved       214393
+LoadProcessed       467623733
+LocalVarInRecur     6162
+MaxInAddrEdge       1
+MaxInCopyEdge       5325
+MaxInLoadEdge       10282
+MaxInStoreEdge      228
+MaxNodesInSCC       42018
+MaxOutAddrEdge      5572
+MaxOutCopyEdge      32208
+MaxOutLoadEdge      538
+MaxOutStoreEdge     9084
+MaxPtsSetSize       3704
+MemObjects          101395
+NodesInCycles       49011
+NullPointer         3340
+NumOfAddrs          58323
+NumOfCGEdge         399349
+NumOfCGNode         324678
+NumOfCopys          231746
+NumOfFieldExpand    0
+NumOfGeps           46668
+NumOfLoads          72765
+NumOfSCCDetect      19
+NumOfSFRs           0
+NumOfStores         48170
+NumOfValidNode      317753
+NumOfValidObjNode   62211
+Pointers            528682
+PointsToBlkPtr      0
+PointsToConstPtr    19840
+SolveIterations     20
+StoreProcessed      31196496
+TotalCycleNum       731
+TotalObjects        101395
+TotalPWCCycleNum    41
+TotalPointers       528682
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : omnetpp_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   163452
+MaxNodeInCycle      3062
+NodeInCycle         3325
+TotalCycle          54
+TotalEdge           265747
+TotalNode           16161
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : omnetpp_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.183539
+AvgIn/OutCopyEdge   0.875284
+AvgIn/OutEdge       1.43953
+AvgIn/OutLoadEdge   0.229044
+AvgIn/OutStoreEdge  0.151659
+AvgPtsSetSize       732.758
+AvgTopLvlPtsSize    1275.17
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    2.36122e+07
+MemoryUsageVmsize   2.36135e+07
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           489.733
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       70235
+CopyProcessed       1208889
+DummyFieldPtrs      2124
+FieldObjs           10898
+GepProcessed        188533
+IndCallSites        6837
+IndEdgeSolved       215485
+LoadProcessed       467876315
+LocalVarInRecur     6162
+MaxInAddrEdge       1
+MaxInCopyEdge       5305
+MaxInLoadEdge       10322
+MaxInStoreEdge      228
+MaxNodesInSCC       42018
+MaxOutAddrEdge      5572
+MaxOutCopyEdge      32303
+MaxOutLoadEdge      538
+MaxOutStoreEdge     9120
+MaxPtsSetSize       3704
+MemObjects          101395
+NodesInCycles       6969
+NullPointer         3306
+NumOfAddrs          58291
+NumOfCGEdge         398894
+NumOfCGNode         324519
+NumOfCopys          231322
+NumOfFieldExpand    0
+NumOfGeps           46663
+NumOfLoads          72743
+NumOfSCCDetect      23
+NumOfSFRs           0
+NumOfStores         48166
+NumOfValidNode      317594
+NumOfValidObjNode   62178
+Pointers            528682
+PointsToBlkPtr      0
+PointsToConstPtr    39725
+SolveIterations     23
+StoreProcessed      31199956
+TotalCycleNum       725
+TotalObjects        101395
+TotalPWCCycleNum    40
+TotalPointers       528682
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : omnetpp_r.ll)###############
+UniquePointsToSets       271372
+TotalUnions              2762714
+PropertyUnions           553627
+UniqueUnions             123228
+LookupUnions             1886226
+PreemptiveUnions         199633
+TotalComplements         8911464
+PropertyComplements      7014834
+UniqueComplements        104353
+LookupComplements        1687937
+PreemptiveComplements    104340
+TotalIntersections       9493112
+PropertyIntersections    9240725
+UniqueIntersections      516
+LookupIntersections      42771
+PreemptiveIntersections  209100
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : omnetpp_r.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      132.695
+GenMUCHITime        6.597
+GenRegionTime       5734.47
+InsertPHITime       2.272
+SSARenameTime       0.115
+TotalMSSATime       5743.48
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        9514
+CSChiNode           101420
+CSHasChi            23651
+CSHasMu             32173
+CSMuNode            150556
+FunEntryChi         75670
+FunHasEntryChi      15833
+FunHasRetMu         15712
+FunRetMu            74530
+LoadHasMu           77136
+LoadMuNode          117399
+MSSAPhi             64965
+MaxRegSize          3502
+MemRegions          45623
+StoreChiNode        48609
+StoreHasChi         47512
+#######################################################

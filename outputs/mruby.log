@@ -1,0 +1,169 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+vcall gep idx not constantint
+
+*********General Stats***************
+################ (program : mruby.ll)###############
+AddrsNum            14559
+BBWith2Succ         5760
+BBWith3Succ         133
+CallsNum            24025
+ConstArrayObj       6
+ConstStructObj      6
+ConstantObj         0
+CopysNum            25739
+FIObjNum            2106
+FSObjNum            9565
+FunctionObjs        2054
+GepsNum             34953
+GlobalObjs          38
+HeapObjs            5
+IndCallSites        29
+LoadsNum            53302
+MaxStructSize       53
+NonPtrObj           7802
+ReturnsNum          5102
+StackObjs           9574
+StoresNum           24019
+TotalCallSite       10245
+TotalFieldObjects   6493
+TotalObjects        18165
+TotalPTASVFStmts    124465
+TotalPointers       212826
+TotalSVFStmts       218112
+VarArrayObj         76
+VarStructObj        3231
+----------------Time and memory stats--------------------
+LLVMIRTime          0.264
+SVFIRTime           1.173
+SymbolTableTime     0.074
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : mruby.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   1042
+MaxNodeInCycle      256
+NodeInCycle         291
+TotalCycle          17
+TotalEdge           10281
+TotalNode           2054
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : mruby.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.125377
+AvgIn/OutCopyEdge   0.878942
+AvgIn/OutEdge       1.35422
+AvgIn/OutLoadEdge   0.276048
+AvgIn/OutStoreEdge  0.0738543
+AvgPtsSetSize       8.28249
+AvgTopLvlPtsSize    18.1712
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    321868
+MemoryUsageVmsize   321416
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           4.098
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       13936
+CopyProcessed       170580
+DummyFieldPtrs      972
+FieldObjs           6493
+GepProcessed        51387
+IndCallSites        29
+IndEdgeSolved       51
+LoadProcessed       456447
+LocalVarInRecur     2905
+MaxInAddrEdge       1
+MaxInCopyEdge       2431
+MaxInLoadEdge       1893
+MaxInStoreEdge      324
+MaxNodesInSCC       1281
+MaxOutAddrEdge      2266
+MaxOutCopyEdge      8243
+MaxOutLoadEdge      746
+MaxOutStoreEdge     1504
+MaxPtsSetSize       493
+MemObjects          18165
+NodesInCycles       3699
+NullPointer         3435
+NumOfAddrs          13121
+NumOfCGEdge         128601
+NumOfCGNode         108748
+NumOfCopys          59498
+NumOfFieldExpand    0
+NumOfGeps           32485
+NumOfLoads          28889
+NumOfSCCDetect      18
+NumOfSFRs           0
+NumOfStores         7729
+NumOfValidNode      104652
+NumOfValidObjNode   13334
+Pointers            212826
+PointsToBlkPtr      0
+PointsToConstPtr    9839
+SolveIterations     18
+StoreProcessed      104873
+TotalCycleNum       174
+TotalObjects        18165
+TotalPWCCycleNum    16
+TotalPointers       212826
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : mruby.ll)###############
+UniquePointsToSets       19786
+TotalUnions              257106
+PropertyUnions           175689
+UniqueUnions             1509
+LookupUnions             76970
+PreemptiveUnions         2938
+TotalComplements         1989381
+PropertyComplements      1919020
+UniqueComplements        420
+LookupComplements        69521
+PreemptiveComplements    420
+TotalIntersections       162392
+PropertyIntersections    161540
+UniqueIntersections      2
+LookupIntersections      7
+PreemptiveIntersections  843
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : mruby.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      1.30072
+GenMUCHITime        0.09
+GenRegionTime       0.826
+InsertPHITime       0.012
+SSARenameTime       0.026
+TotalMSSATime       0.958
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        2473
+CSChiNode           8322
+CSHasChi            5444
+CSHasMu             6676
+CSMuNode            12950
+FunEntryChi         9147
+FunHasEntryChi      1806
+FunHasRetMu         1932
+FunRetMu            9041
+LoadHasMu           32682
+LoadMuNode          36661
+MSSAPhi             7079
+MaxRegSize          49
+MemRegions          6511
+StoreChiNode        10556
+StoreHasChi         9808
+#######################################################
+Souffle overhead: 4075 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 153.685 ms
+Elapsed: 14767 ms

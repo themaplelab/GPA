@@ -1,0 +1,168 @@
+sh: 1: npm: not found
+sh: 1: npm: not found
+
+*********General Stats***************
+################ (program : povray_r.ll)###############
+AddrsNum            20755
+BBWith2Succ         9966
+BBWith3Succ         290
+CallsNum            27129
+ConstArrayObj       18
+ConstStructObj      96
+ConstantObj         0
+CopysNum            15115
+FIObjNum            2552
+FSObjNum            12611
+FunctionObjs        2245
+GepsNum             42422
+GlobalObjs          410
+HeapObjs            176
+IndCallSites        185
+LoadsNum            74089
+MaxStructSize       96
+NonPtrObj           10167
+ReturnsNum          6129
+StackObjs           12332
+StoresNum           32974
+TotalCallSite       17738
+TotalFieldObjects   1987
+TotalObjects        17151
+TotalPTASVFStmts    129665
+TotalPointers       266017
+TotalSVFStmts       268828
+VarArrayObj         932
+VarStructObj        358
+----------------Time and memory stats--------------------
+LLVMIRTime          0.391
+SVFIRTime           1.451
+SymbolTableTime     0.106
+#######################################################
+
+*********PTACallGraph Stats (Andersen analysis)***************
+################ (program : povray_r.ll)###############
+----------------Numbers stats----------------------------
+CalRetPairInCycle   3757
+MaxNodeInCycle      205
+NodeInCycle         539
+TotalCycle          57
+TotalEdge           23282
+TotalNode           2245
+#######################################################
+
+*********Andersen Pointer Analysis Stats***************
+################ (program : povray_r.ll)###############
+----------------Time and memory stats--------------------
+AvgIn/OutAddrEdge   0.14241
+AvgIn/OutCopyEdge   1.00256
+AvgIn/OutEdge       1.52234
+AvgIn/OutLoadEdge   0.288789
+AvgIn/OutStoreEdge  0.0885746
+AvgPtsSetSize       78.1125
+AvgTopLvlPtsSize    195.581
+CollapseTime        0
+CopyGepTime         0
+LoadStoreTime       0
+MemoryUsageVmrss    1.31446e+06
+MemoryUsageVmsize   1.31361e+06
+SCCDetectTime       0
+SCCMergeTime        0
+TotalTime           13.3
+UpdateCGTime        0
+----------------Numbers stats----------------------------
+AddrProcessed       17509
+CopyProcessed       278688
+DummyFieldPtrs      352
+FieldObjs           1987
+GepProcessed        140186
+IndCallSites        185
+IndEdgeSolved       5697
+LoadProcessed       8805073
+LocalVarInRecur     2908
+MaxInAddrEdge       1
+MaxInCopyEdge       1296
+MaxInLoadEdge       1325
+MaxInStoreEdge      535
+MaxNodesInSCC       154
+MaxOutAddrEdge      2347
+MaxOutCopyEdge      6543
+MaxOutLoadEdge      360
+MaxOutStoreEdge     1261
+MaxPtsSetSize       895
+MemObjects          17151
+NodesInCycles       1262
+NullPointer         236
+NumOfAddrs          16615
+NumOfCGEdge         160996
+NumOfCGNode         118385
+NumOfCopys          74730
+NumOfFieldExpand    0
+NumOfGeps           42239
+NumOfLoads          33693
+NumOfSCCDetect      15
+NumOfSFRs           0
+NumOfStores         10334
+NumOfValidNode      116670
+NumOfValidObjNode   14977
+Pointers            266017
+PointsToBlkPtr      0
+PointsToConstPtr    13443
+SolveIterations     15
+StoreProcessed      2019087
+TotalCycleNum       173
+TotalObjects        17151
+TotalPWCCycleNum    12
+TotalPointers       266017
+#######################################################
+
+****Persistent Points-To Cache Statistics: Andersen's analysis bitvector****
+################ (program : povray_r.ll)###############
+UniquePointsToSets       27933
+TotalUnions              495325
+PropertyUnions           153772
+UniqueUnions             10116
+LookupUnions             312559
+PreemptiveUnions         18878
+TotalComplements         1825772
+PropertyComplements      1556091
+UniqueComplements        4946
+LookupComplements        259790
+PreemptiveComplements    4945
+TotalIntersections       1088781
+PropertyIntersections    1074477
+UniqueIntersections      108
+LookupIntersections      4244
+PreemptiveIntersections  9952
+#######################################################
+
+*********Memory SSA Statistics***************
+################ (program : povray_r.ll)###############
+----------------Time and memory stats--------------------
+AverageRegSize      9.44168
+GenMUCHITime        0.293
+GenRegionTime       6.403
+InsertPHITime       0.066
+SSARenameTime       0.036
+TotalMSSATime       6.8
+----------------Numbers stats----------------------------
+BBHasMSSAPhi        4384
+CSChiNode           37457
+CSHasChi            7733
+CSHasMu             8548
+CSMuNode            53992
+FunEntryChi         12992
+FunHasEntryChi      2083
+FunHasRetMu         2126
+FunRetMu            12967
+LoadHasMu           34041
+LoadMuNode          38696
+MSSAPhi             23266
+MaxRegSize          511
+MemRegions          6593
+StoreChiNode        10480
+StoreHasChi         9233
+#######################################################
+Souffle overhead: 24589 ms
+Starting flow-sensitive pointer analysis on GPU.
+
+Solving time (GPU only): 170.776 ms
+Elapsed: 51344 ms

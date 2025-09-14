@@ -825,17 +825,15 @@ std::string getGraphOutputName(std::string filename){
 }
 
 
+
 ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR *pag){
 
-  ProGraML graph;
+  ProGraML graph(pag, mssa->getNodeId2MrIdsMap());
   std::vector<const SVFVar*> allVars;
-
-  
 
   const CallGraph* svfirCallGraph = pag->getCallGraph();
 
   for(const auto& item: *svfirCallGraph){
-
 
     const FunObjVar* fun = item.second->getFunction();
     if(Options::MSSAFun()!="" && Options::MSSAFun()!=fun->getName()){
@@ -849,10 +847,11 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
     auto entry = graph.addGraphNodeFromIcfgNode(pag->getICFG()->getFunEntryICFGNode(fun));
     graph.addEdge(0, entry, "call");
     auto entryOutEdges = pag->getICFG()->getFunEntryICFGNode(fun)->getOutEdges();
-
-    for(auto oe : entryOutEdges){
+    
+    for(auto beg = entryOutEdges.begin(), end = entryOutEdges.end(); beg != end; ++beg){
+      auto oe = *beg;
       auto toId = graph.addGraphNodeFromIcfgNode(oe->getDstNode());
-      graph.addEdge(entry, toId, "control");
+      graph.addEdge(entry, toId, "control", std::distance(entryOutEdges.begin(), beg));
     }
 
 
@@ -865,9 +864,10 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
 
       if(isa<RetICFGNode>(oe->getDstNode())){
         auto exitOutEdges = oe->getDstNode()->getOutEdges();
-        for(auto subOe : exitOutEdges){
+        for(auto beg = exitOutEdges.begin(), end = exitOutEdges.end(); beg != end; ++beg){
+          auto subOe = *beg;
           auto subToId = graph.addGraphNodeFromIcfgNode(subOe->getDstNode());
-          graph.addEdge(toId, subToId, "control");
+          graph.addEdge(toId, subToId, "control", std::distance(exitOutEdges.begin(), beg));
         }
       }
     }
@@ -889,7 +889,7 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
           auto mrDst = graph.addGraphNodeFromMemoryRegion(fun->getName(),mrId,resMrVer);
           auto mrSrc = graph.addGraphNodeFromMemoryRegion(fun->getName(),mrId,opMrVer);
 
-          graph.addEdge(mrSrc, mrDst, "data");
+          graph.addEdge(mrSrc, mrDst, "data", 0);
 
 
           
@@ -914,7 +914,7 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
           for(auto it = (*pi)->opVerBegin(), eit = (*pi)->opVerEnd(); it!=eit; ++it){
               auto opPiVer = it->second->getSSAVersion();
               auto opPiId = graph.addGraphNodeFromMemoryRegion(fun->getName(),mrId,opPiVer);
-              graph.addEdge(opPiId, resPiId, "data");
+              graph.addEdge(opPiId, resPiId, "data", std::distance((*pi)->opVerBegin(), it));
               // addPtgEdge(opPiId, resPiId, "c");
           }
       }
@@ -926,7 +926,7 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
           if(isAppCall || SVFUtil::isHeapAllocExtCall(inst)){
             const CallICFGNode* cs = cast<CallICFGNode>(inst);
             
-
+            size_t argPos = 0;
             for(auto stmt : inst->getSVFStmts()){
               if(auto call = dyn_cast<CallPE>(stmt)){
                 auto src = call->getRHSVar();
@@ -935,9 +935,10 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
                 // todo add edge label.
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(instId, lhsId, "data");
+                graph.addEdge(rhsId, instId, "data", argPos);
+                graph.addEdge(instId, lhsId, "data", argPos);
               }
+              ++argPos;
             }
 
             auto fromId = graph.addGraphNodeFromIcfgNode(inst);
@@ -961,7 +962,7 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto mrSrcId = graph.addGraphNodeFromMemoryRegion(fun->getName(),mrId,mrVer);
                 auto mrDstId = graph.addGraphNodeFromMemoryRegion(cs->getCalledFunction()->getName(),mrId,0);
 
-                graph.addEdge(mrSrcId, mrDstId, "data");
+                graph.addEdge(mrSrcId, mrDstId, "data", std::distance(mssa->getMUSet(cs).begin(), mit));
               }
             }
 
@@ -982,9 +983,11 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
           else{
             auto fromId = graph.addGraphNodeFromIcfgNode(inst);
             auto outEdges = inst->getOutEdges();
-            for(auto oe : outEdges){
+
+            for(auto beg = outEdges.begin(), end = outEdges.end(); beg != end; ++beg){
+              auto oe = *beg;
               auto toId = graph.addGraphNodeFromIcfgNode(oe->getDstNode());
-              graph.addEdge(fromId, toId, "control");
+              graph.addEdge(fromId, toId, "control", std::distance(outEdges.begin(), beg));
             }
 
             // add data flow
@@ -995,8 +998,8 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto topId = graph.addGraphNodeFromSvfVar(top);
                 auto addr = alloca->getRHSVar();
                 auto addrId = graph.addGraphNodeFromSvfVar(addr);
-                graph.addEdge(instId, topId, "data");
-                graph.addEdge(instId, addrId, "data");
+                graph.addEdge(instId, topId, "data", 0);
+                graph.addEdge(instId, addrId, "data", 0);
 
                 allVarInFun.push_back(top);
                 allVars.push_back(top);
@@ -1005,7 +1008,7 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 if(m.count(alloca->getRHSVarID())){
                   for(auto mrId : m.at(alloca->getRHSVarID())){
                     auto mrDst = graph.addGraphNodeFromMemoryRegion(fun->getName(),mrId,0);
-                    graph.addEdge(addrId, mrDst, "data");
+                    graph.addEdge(addrId, mrDst, "data", 0);
                   }
                 }
                 
@@ -1017,11 +1020,12 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 allVars.push_back(dst);
 
                 auto dstId = graph.addGraphNodeFromSvfVar(dst);
-                for(auto src : multiOp->getOpndVars()){
+                for(auto beg = multiOp->getOpndVars().begin(), end = multiOp->getOpndVars().end(); beg != end; ++beg){
+                  auto src = *beg;
                   auto srcId = graph.addGraphNodeFromSvfVar(src);
-                  graph.addEdge(srcId, instId, "data");
+                  graph.addEdge(srcId, instId, "data", std::distance(multiOp->getOpndVars().begin(), beg));
                 }
-                graph.addEdge(instId, dstId, "data");
+                graph.addEdge(instId, dstId, "data", 0);
               }
               else if(auto store = dyn_cast<StoreStmt>(stmt)){
                 auto src = store->getRHSVar();
@@ -1030,8 +1034,8 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
 
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(lhsId, instId, "data");
+                graph.addEdge(rhsId, instId, "data", 0);
+                graph.addEdge(lhsId, instId, "data", 1);
 
                 MemSSA::CHISet& chiSet = mssa->getCHISet(store);
                 for(MemSSA::CHISet::iterator it = chiSet.begin(), eit = chiSet.end(); it!=eit; ++it){
@@ -1057,8 +1061,8 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
                 // todo add edge label.
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(instId, lhsId, "data");
+                graph.addEdge(rhsId, instId, "data", 0);
+                graph.addEdge(instId, lhsId, "data", 0);
 
                 MemSSA::MUSet &muSet = mssa->getMUSet(load);
 
@@ -1082,8 +1086,8 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
                 // todo add edge label.
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(instId, lhsId, "data");
+                graph.addEdge(rhsId, instId, "data", 0);
+                graph.addEdge(instId, lhsId, "data", 0);
               }
               else if(auto ret = dyn_cast<RetPE>(stmt)){
                 auto src = ret->getRHSVar();
@@ -1092,8 +1096,8 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
                 // todo add edge label.
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(instId, lhsId, "data");
+                graph.addEdge(rhsId, instId, "data", 0);
+                graph.addEdge(instId, lhsId, "data", 0);
               }
               else if(auto copy = dyn_cast<CopyStmt>(stmt)){
                 auto src = copy->getRHSVar();
@@ -1105,35 +1109,35 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
                 auto rhsId = graph.addGraphNodeFromSvfVar(src);
                 auto lhsId = graph.addGraphNodeFromSvfVar(dst);
                 // todo add edge label.
-                graph.addEdge(rhsId, instId, "data");
-                graph.addEdge(instId, lhsId, "data");
+                graph.addEdge(rhsId, instId, "data", 0);
+                graph.addEdge(instId, lhsId, "data", 0);
               }
             }
           }
       }
 
-      for(size_t i = 0; i < allVarInFun.size(); ++i){
-        for(size_t j = i+1; j < allVarInFun.size(); ++j){
-          auto aliasRes = ander->alias(allVarInFun[i], allVarInFun[j]);
-          if(aliasRes == MustAlias){
-            // todo: add must alias edge
-            auto aliasId1 = graph.addGraphNodeFromSvfVar(allVarInFun[i]);
-            auto aliasId2 = graph.addGraphNodeFromSvfVar(allVarInFun[j]);
+      // for(size_t i = 0; i < allVarInFun.size(); ++i){
+      //   for(size_t j = i+1; j < allVarInFun.size(); ++j){
+      //     auto aliasRes = ander->alias(allVarInFun[i], allVarInFun[j]);
+      //     if(aliasRes == MustAlias){
+      //       // todo: add must alias edge
+      //       auto aliasId1 = graph.addGraphNodeFromSvfVar(allVarInFun[i]);
+      //       auto aliasId2 = graph.addGraphNodeFromSvfVar(allVarInFun[j]);
 
-            graph.addEdge(aliasId1, aliasId2, "mustAlias");
-            graph.addEdge(aliasId2, aliasId1, "mustAlias");
+      //       graph.addEdge(aliasId1, aliasId2, "mustAlias");
+      //       graph.addEdge(aliasId2, aliasId1, "mustAlias");
 
-          }
-          else if(aliasRes == MayAlias || aliasRes == PartialAlias){
-            // todo: add may alias edge
-            auto aliasId1 = graph.addGraphNodeFromSvfVar(allVarInFun[i]);
-            auto aliasId2 = graph.addGraphNodeFromSvfVar(allVarInFun[j]);
+      //     }
+      //     else if(aliasRes == MayAlias || aliasRes == PartialAlias){
+      //       // todo: add may alias edge
+      //       auto aliasId1 = graph.addGraphNodeFromSvfVar(allVarInFun[i]);
+      //       auto aliasId2 = graph.addGraphNodeFromSvfVar(allVarInFun[j]);
 
-            graph.addEdge(aliasId1, aliasId2, "mayAlias");
-            graph.addEdge(aliasId2, aliasId1, "mayAlias");
-          }
-        }
-      }
+      //       graph.addEdge(aliasId1, aliasId2, "mayAlias");
+      //       graph.addEdge(aliasId2, aliasId1, "mayAlias");
+      //     }
+      //   }
+      // }
 
     }
 
@@ -1151,8 +1155,523 @@ ProGraML generateExtendedProGraMlGraph(SVF::MemSSA *mssa, Andersen *ander, SVFIR
 
 }
 
+void generateSouffleFacts(SVFIR *pag){
+
+  // ProGraML graph(pag, mssa->getNodeId2MrIdsMap());
+
+  std::vector<std::pair<SVF::NodeID, SVF::NodeID>> nexts;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> copys;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> addrs;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> stores;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> loads;
+  std::set<SVF::NodeID> vars;
+  std::set<SVF::NodeID> objs;
+
+
+
+
+
+  const CallGraph* svfirCallGraph = pag->getCallGraph();
+
+  for(const auto& item: *svfirCallGraph){
+
+    const FunObjVar* fun = item.second->getFunction();
+    if(Options::MSSAFun()!="" && Options::MSSAFun()!=fun->getName()){
+        continue;
+    }
+    if(fun->isDeclaration()){
+      continue;
+    }
+
+    auto entryOutEdges = pag->getICFG()->getFunEntryICFGNode(fun)->getOutEdges();
+    
+    for(auto beg = entryOutEdges.begin(), end = entryOutEdges.end(); beg != end; ++beg){
+      auto oe = *beg;
+      nexts.push_back({oe->getSrcID(), oe->getDstID()});
+    }
+
+    auto exitOutEdges = pag->getICFG()->getFunExitICFGNode(fun)->getOutEdges();
+    for(auto oe : exitOutEdges){
+      nexts.push_back({oe->getSrcID(), oe->getDstID()});
+
+      if(isa<RetICFGNode>(oe->getDstNode())){
+        auto exitOutEdges = oe->getDstNode()->getOutEdges();
+        for(auto beg = exitOutEdges.begin(), end = exitOutEdges.end(); beg != end; ++beg){
+          auto subOe = *beg;
+          nexts.push_back({subOe->getSrcID(), subOe->getDstID()});
+        }
+      }
+    }
+
+
+    for(FunObjVar::const_bb_iterator bit = fun->begin(), ebit = fun->end(); bit != ebit; ++bit){
+
+      const SVFBasicBlock* bb = bit->second;
+
+      for(const auto& inst: bb->getICFGNodeList()){
+          bool isAppCall = SVFUtil::isNonInstricCallSite(inst) && !SVFUtil::isExtCall(inst);
+          if(isAppCall || SVFUtil::isHeapAllocExtCall(inst)){
+            const CallICFGNode* cs = cast<CallICFGNode>(inst);
+            
+            size_t argPos = 0;
+            for(auto stmt : inst->getSVFStmts()){
+              if(auto call = dyn_cast<CallPE>(stmt)){
+                auto src = call->getRHSVar();
+                auto dst = call->getLHSVar();
+                copys.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+              }
+              ++argPos;
+            }
+
+            auto outEdges = inst->getOutEdges();
+            for(auto oe : outEdges){
+              nexts.push_back({oe->getSrcID(), oe->getDstID()});
+            }
+
+            if(cs->isIndirectCall()){
+              continue;
+            }
+          }
+          else{
+            auto outEdges = inst->getOutEdges();
+
+            for(auto beg = outEdges.begin(), end = outEdges.end(); beg != end; ++beg){
+              auto oe = *beg;
+              nexts.push_back({oe->getSrcID(), oe->getDstID()});
+            }
+
+            // add data flow
+            // for each inst, e.g. a = load b, get node for a, create data edge to a, get node for b, create edge from b.
+            for(auto stmt : inst->getSVFStmts()){
+              if(auto alloca = dyn_cast<AddrStmt>(stmt)){
+                auto top = alloca->getLHSVar();
+                auto addr = alloca->getRHSVar();
+
+                addrs.push_back({top->getId(), addr->getId(), inst->getId()});
+                vars.insert(top->getId());
+                objs.insert(addr->getId());
+              }
+              else if(auto multiOp = dyn_cast<MultiOpndStmt>(stmt)){
+                auto dst = multiOp->getRes();
+
+                for(auto beg = multiOp->getOpndVars().begin(), end = multiOp->getOpndVars().end(); beg != end; ++beg){
+                  auto src = *beg;
+                  copys.push_back({dst->getId(), src->getId(), inst->getId()});
+                  vars.insert(dst->getId());
+                  vars.insert(src->getId());
+                }
+              }
+              else if(auto store = dyn_cast<StoreStmt>(stmt)){
+                auto src = store->getRHSVar();
+                auto dst = store->getLHSVar();
+
+                stores.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+
+              }
+              else if(auto load = dyn_cast<LoadStmt>(stmt)){
+                auto src = load->getRHSVar();
+                auto dst = load->getLHSVar();
+
+                loads.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+
+
+
+              }
+              else if(auto gep = dyn_cast<GepStmt>(stmt)){
+                auto src = gep->getRHSVar();
+                auto dst = gep->getLHSVar();
+                copys.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+
+              }
+              else if(auto ret = dyn_cast<RetPE>(stmt)){
+                auto src = ret->getRHSVar();
+                auto dst = ret->getLHSVar();
+
+                copys.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+
+              }
+              else if(auto copy = dyn_cast<CopyStmt>(stmt)){
+                auto src = copy->getRHSVar();
+                auto dst = copy->getLHSVar();
+                copys.push_back({dst->getId(), src->getId(), inst->getId()});
+                vars.insert(dst->getId());
+                vars.insert(src->getId());
+
+              }
+            }
+          }
+      }
+    }
+  }
+
+  std::ofstream nextOut("Next.facts");
+  for(auto [f,t] : nexts){
+    nextOut << f << "," << t << "\n";
+  }
+  nextOut.close();
+
+  std::ofstream addrOut("AddrOf.facts");
+  for(auto [f,t,i] : addrs){
+    addrOut << f << "," << t << "," << i << "\n";
+  }
+  addrOut.close();
+
+  std::ofstream copyOut("Copy.facts");
+  for(auto [f,t,i] : copys){
+    copyOut << f << "," << t << "," << i << "\n";
+  }
+  copyOut.close();
+
+  std::ofstream storeOut("Store.facts");
+  for(auto [f,t,i] : stores){
+    storeOut << f << "," << t << "," << i << "\n";
+  }
+  storeOut.close();
+
+  std::ofstream loadOut("Load.facts");
+  for(auto [f,t,i] : loads){
+    loadOut << f << "," << t << "," << i << "\n";
+  }
+  loadOut.close();
+
+  std::ofstream varOut("Var.facts");
+  for(auto i : vars){
+    varOut << i << "\n";
+  }
+  varOut.close();
+
+  std::ofstream objOut("Obj.facts");
+  for(auto i : objs){
+    objOut << i << "\n";
+  }
+  objOut.close();
+
+}
+
+void generateSouffleFactsTrue(SVF::MemSSA *mssa, Andersen *ander, SVFIR *pag, const std::string &graphOutputFileName){
+
+
+  auto start = std::chrono::high_resolution_clock::now();
+
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID>> copys;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID>> addrs;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> stores;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID, SVF::NodeID>> loads;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID>> uses;
+  std::vector<std::tuple<SVF::NodeID, SVF::NodeID>> defs;
+
+
+
+
+  const CallGraph* svfirCallGraph = pag->getCallGraph();
+
+  for(const auto& item: *svfirCallGraph){
+
+    const FunObjVar* fun = item.second->getFunction();
+    if(Options::MSSAFun()!="" && Options::MSSAFun()!=fun->getName()){
+        continue;
+    }
+    if(fun->isDeclaration()){
+      continue;
+    }
+    
+
+    if(mssa->hasFuncEntryChi(fun)){
+      MemSSA::CHISet &entry_chis = mssa->getFuncEntryChiSet(fun);
+      for(MemSSA::CHISet::iterator chi_it = entry_chis.begin(); chi_it != entry_chis.end(); chi_it++){
+          auto chi = *chi_it;
+
+          auto mrId = chi->getMR()->getMRID();
+          auto resMrVer = chi->getResVer()->getSSAVersion();
+          auto opMrVer = chi->getOpVer()->getSSAVersion();
+          auto pts = chi->getMR()->getPointsTo();
+
+          auto mrDst = mssa->getPtgIdFromMrIdAndVer({fun->getName(), mrId, resMrVer});
+          auto mrSrc = mssa->getPtgIdFromMrIdAndVer({fun->getName(), mrId, opMrVer});
+
+          copys.push_back({mrDst, mrSrc});
+
+ 
+      }
+    } 
+
+
+    for(FunObjVar::const_bb_iterator bit = fun->begin(), ebit = fun->end(); bit != ebit; ++bit){
+
+      const SVFBasicBlock* bb = bit->second;
+
+      std::vector<const SVFVar*> allVarInFun;
+
+      MemSSA::PHISet& phiSet = mssa->getPHISet(bb);
+      for(MemSSA::PHISet::iterator pi = phiSet.begin(), epi = phiSet.end(); pi !=epi; ++pi){
+
+          auto mrId = (*pi)->getMR()->getMRID();
+          auto resPiVer = (*pi)->getResVer()->getSSAVersion();
+          auto resPiId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,resPiVer});
+          for(auto it = (*pi)->opVerBegin(), eit = (*pi)->opVerEnd(); it!=eit; ++it){
+              auto opPiVer = it->second->getSSAVersion();
+              auto opPiId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,opPiVer});
+              copys.push_back({resPiId, opPiId});
+          }
+      }
+
+
+      for(const auto& inst: bb->getICFGNodeList()){
+          bool isAppCall = SVFUtil::isNonInstricCallSite(inst) && !SVFUtil::isExtCall(inst);
+          // auto instId = graph.addGraphNodeFromIcfgNode(inst);
+          if(isAppCall || SVFUtil::isHeapAllocExtCall(inst)){
+            const CallICFGNode* cs = cast<CallICFGNode>(inst);
+            
+            size_t argPos = 0;
+            for(auto stmt : inst->getSVFStmts()){
+              if(auto call = dyn_cast<CallPE>(stmt)){
+                auto src = call->getRHSVar();
+                auto dst = call->getLHSVar();
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+
+                copys.push_back({lhsId, rhsId});
+              }
+              ++argPos;
+            }
+
+            if(cs->isIndirectCall()){
+              continue;
+            }
+
+
+            if(mssa->hasMU(cs)){
+              for(MemSSA::MUSet::iterator mit = mssa->getMUSet(cs).begin(), emit = mssa->getMUSet(cs).end(); mit != emit; ++mit){
+
+                auto mrId = (*mit)->getMR()->getMRID();
+                auto mrVer = (*mit)->getMRVer()->getSSAVersion();
+
+                auto mrSrcId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,mrVer});
+                auto mrDstId = mssa->getPtgIdFromMrIdAndVer({cs->getCalledFunction()->getName(),mrId,0});
+                copys.push_back({mrDstId, mrSrcId});
+                uses.push_back({mrSrcId, cs->getId()});
+              }
+            }
+
+            if(mssa->hasCHI(cs)){
+              for(MemSSA::CHISet::iterator cit = mssa->getCHISet(cs).begin(), ecit = mssa->getCHISet(cs).end(); cit != ecit; ++cit){
+                auto mrId = (*cit)->getMR()->getMRID();
+                auto mrResVer = (*cit)->getResVer()->getSSAVersion();
+
+                auto mrDstId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,mrResVer});
+
+                auto mrOpVer = (*cit)->getOpVer()->getSSAVersion();
+                auto mrSrcId = mssa->getPtgIdFromMrIdAndVer({cs->getCalledFunction()->getName(),mrId,mrOpVer});
+
+                uses.push_back({mrSrcId, cs->getId()});
+                copys.push_back({mrDstId, mrSrcId});
+              }
+            }
+          }
+          else{
+
+            // add data flow
+            // for each inst, e.g. a = load b, get node for a, create data edge to a, get node for b, create edge from b.
+            for(auto stmt : inst->getSVFStmts()){
+              if(auto alloca = dyn_cast<AddrStmt>(stmt)){
+                auto top = alloca->getLHSVar();
+                auto topId = top->getId();
+                auto addr = alloca->getRHSVar();
+                auto addrId = addr->getId();
+                addrs.push_back({topId, addrId});
+
+
+
+                auto m = mssa->getNodeId2MrIdsMap();
+                if(m.count(alloca->getRHSVarID())){
+                  for(auto mrId : m.at(alloca->getRHSVarID())){
+                    auto mrDst = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,0});
+                    copys.push_back({mrDst, addrId});
+                  }
+                }
+                
+
+              }
+              else if(auto multiOp = dyn_cast<MultiOpndStmt>(stmt)){
+                auto dst = multiOp->getRes();
+
+                auto dstId = dst->getId();
+                for(auto beg = multiOp->getOpndVars().begin(), end = multiOp->getOpndVars().end(); beg != end; ++beg){
+                  auto src = *beg;
+                  auto srcId = src->getId();
+                  copys.push_back({dstId, srcId});
+                }
+              }
+              else if(auto store = dyn_cast<StoreStmt>(stmt)){
+                auto src = store->getRHSVar();
+                auto dst = store->getLHSVar();
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+
+                stores.push_back({lhsId, rhsId, inst->getId()});
+
+                MemSSA::CHISet& chiSet = mssa->getCHISet(store);
+                for(MemSSA::CHISet::iterator it = chiSet.begin(), eit = chiSet.end(); it!=eit; ++it){
+
+                  auto mrId = (*it)->getMR()->getMRID();
+                  auto mrOpVer = (*it)->getOpVer()->getSSAVersion();
+                  auto mrResVer = (*it)->getResVer()->getSSAVersion();
+
+                  auto mrOpId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,mrOpVer});
+                  auto mrResId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,mrResVer});
+
+                  uses.push_back({mrOpId, inst->getId()});
+                  defs.push_back({mrResId, inst->getId()});
+                }
+              }
+              else if(auto load = dyn_cast<LoadStmt>(stmt)){
+                auto src = load->getRHSVar();
+                auto dst = load->getLHSVar();
+
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+
+                loads.push_back({lhsId, rhsId, inst->getId()});
+                // todo add edge label.
+
+                MemSSA::MUSet &muSet = mssa->getMUSet(load);
+
+                for(MemSSA::MUSet::iterator it = muSet.begin(), eit = muSet.end(); it!=eit; ++it){
+
+                  auto mrId = (*it)->getMR()->getMRID();
+                  auto mrVer = (*it)->getMRVer()->getSSAVersion();
+
+                  auto mrSrcId = mssa->getPtgIdFromMrIdAndVer({fun->getName(),mrId,mrVer});
+
+                  uses.push_back({mrSrcId, inst->getId()});
+
+                }
+              }
+              else if(auto gep = dyn_cast<GepStmt>(stmt)){
+                auto src = gep->getRHSVar();
+                auto dst = gep->getLHSVar();
+
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+                // todo add edge label.
+
+                copys.push_back({lhsId, rhsId});
+
+              }
+              else if(auto ret = dyn_cast<RetPE>(stmt)){
+                auto src = ret->getRHSVar();
+                auto dst = ret->getLHSVar();
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+                // todo add edge label.
+                copys.push_back({lhsId, rhsId});
+
+              }
+              else if(auto copy = dyn_cast<CopyStmt>(stmt)){
+                auto src = copy->getRHSVar();
+                auto dst = copy->getLHSVar();
+
+
+                auto rhsId = src->getId();
+                auto lhsId = dst->getId();
+                // todo add edge label.
+                copys.push_back({lhsId, rhsId});
+              }
+            }
+          }
+      }
+
+
+    }
+
+    if(mssa->hasReturnMu(fun)){
+      MemSSA::MUSet & return_mus = mssa->getReturnMuSet(fun);
+      for(MemSSA::MUSet::iterator mu_it = return_mus.begin(); mu_it != return_mus.end(); mu_it++){
+          // no need to process retmu explicitly.
+      }
+    }
+    
+  }
+
+
+  std::ofstream addrOut(graphOutputFileName + "-AddrOf.facts");
+  for(auto [f,t] : addrs){
+    addrOut << f << "," << t << "\n";
+  }
+  addrOut.close();
+
+  std::ofstream copyOut(graphOutputFileName + "-Copy.facts");
+  for(auto [f,t] : copys){
+    copyOut << f << "," << t << "\n";
+  }
+  copyOut.close();
+
+  std::ofstream storeOut(graphOutputFileName + "-Store.facts");
+  for(auto [f,t,i] : stores){
+    storeOut << f << "," << t << "," << i << "\n";
+  }
+  storeOut.close();
+
+  std::ofstream loadOut(graphOutputFileName + "-Load.facts");
+  for(auto [f,t,i] : loads){
+    loadOut << f << "," << t << "," << i << "\n";
+  }
+  loadOut.close();
+
+  std::ofstream useOut(graphOutputFileName + "-Use.facts");
+  for(auto [f,i] : uses){
+    useOut << f << "," << i << "\n";
+  }
+  useOut.close();
+
+  std::ofstream defOut(graphOutputFileName + "-Def.facts");
+  for(auto [f,i] : defs){
+    defOut << f << "," << i << "\n";
+  }
+  defOut.close();
+
+  std::ofstream getMrOut(graphOutputFileName + "-getMr.facts");
+  for(auto pair : mssa->getNodeId2mrIdAndVerMap()){
+    getMrOut << pair.first << "," << std::get<1>(pair.second) << "\n";
+  }
+  getMrOut.close();
+
+  std::ofstream ptrIsRelatedToMrOut(graphOutputFileName + "-PtrIsRelatedToMr.facts");
+  for(auto pair : mssa->getNodeId2MrIdsMap()){
+    for(auto t : pair.second){
+      ptrIsRelatedToMrOut << pair.first << "," << t << "\n";
+    }
+    
+  }
+  ptrIsRelatedToMrOut.close();
+
+  auto stop = std::chrono::high_resolution_clock::now();
+	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
+	std::cout << "Souffle overhead: " << ms << " ms\n";
+
+
+}
+
+
 
 int main(int argc, char **argv) {
+
+  auto start = std::chrono::high_resolution_clock::now();
 
   std::vector<std::string> moduleNameVec;
   moduleNameVec = OptionBase::parseOptions(argc, argv, "Whole Program Points-to Analysis", "[options] <input-bitcode...>");
@@ -1169,19 +1688,40 @@ int main(int argc, char **argv) {
   SVFIRBuilder builder;
   SVFIR *pag = builder.build();
 
+  // generateSouffleFacts(pag);
+
+  // std::terminate();
+  
+
   /// Create Andersen's pointer analysis
   Andersen *ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
 
   SVFGBuilder memSSA;
   auto mssa = memSSA.buildMSSA(ander, true);
 
+  
+
 
   // Initial ptg stored at mssa->ptg.
   mssa->buildInitialPointsToGraph(ander);
 
+  generateSouffleFactsTrue(mssa.get(), ander, pag, graphOutputFileName);
+
 
   if(Options::DumpIntermediateResultsToFile()){
     dumpNecessaryFilesForGPU(graphOutputFileName, mssa.get());
+  }
+
+  if(Options::ProGraML()){
+    auto graph = generateExtendedProGraMlGraph(mssa.get(), ander, pag);
+    std::ofstream graphOut(graphOutputFileName+"-programl.txt");
+    if(!graphOut){
+      std::cerr << "Cannot open file to dump programl graph\n";
+    }
+
+    graphOut << graph.dumpGraph();
+    graphOut.close();
+
   }
 
 
@@ -1201,7 +1741,7 @@ int main(int argc, char **argv) {
   }
   else if(Options::ArchitectureSelected(PointerAnalysis::GPU_SBV)){
     auto ptg = PointsToGraph(mssa.get());
-    gpamain(ptg, graphOutputFileName, Options::VerifyResult());
+    gpamain(ptg, graphOutputFileName, Options::VerifyResult(), start);
   }
 
   
@@ -1211,15 +1751,7 @@ int main(int argc, char **argv) {
   // }
 
 
-  if(Options::ProGraML()){
-    auto graph = generateExtendedProGraMlGraph(mssa.get(), ander, pag);
-    std::ofstream graphOut(graphOutputFileName+"-programl.txt");
-    if(!graphOut){
-      std::cerr << "Cannot open file to dump programl graph\n";
-    }
-    graphOut << graph.dumpGraph();
-    graphOut.close();
-  }
+
 
 
   return 0;
